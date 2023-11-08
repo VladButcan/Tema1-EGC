@@ -1,13 +1,13 @@
-#include "lab_m1/lab3/lab3_vis2D.h"
+#include "tema/lab3_vis2D.h"
 
 #include <vector>
 #include <iostream>
 
-#include "lab_m1/lab3/transform2D.h"
-#include "lab_m1/lab3/object2D.h"
+#include "tema/transform2D.h"
+#include "tema/object2D.h"
 
 using namespace std;
-using namespace m1;
+using namespace tema;
 
 
 /*

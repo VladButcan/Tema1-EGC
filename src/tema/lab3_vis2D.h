@@ -3,7 +3,7 @@
 #include "components/simple_scene.h"
 
 
-namespace m1
+namespace tema
 {
     class Lab3_Vis2D : public gfxc::SimpleScene
     {
