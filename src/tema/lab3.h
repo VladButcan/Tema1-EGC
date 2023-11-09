@@ -2,6 +2,8 @@
 
 #include "components/simple_scene.h"
 #include <random>
+#include "Enemy.h"
+#include <chrono>
 
 
 namespace tema
@@ -30,11 +32,12 @@ namespace tema
         void InitSquares();
         void InitWeapons();
         void InitStars();
+        void InitHexagons();
         void RenderArena();
         void RenderHealt();
         void RenderWeapons();
         void RenderStar(int translateX, int translateY);
-        void RenderEnemy();
+        void RenderEnemy(float deltaTimeSecond);
         //void RenderBlockSquare(int translateX, int translateY);
         //Mesh* RenderWeapon(float R, float G, float B);
      protected:
@@ -43,18 +46,32 @@ namespace tema
         float translateX, translateY;
         float scaleX, scaleY;
         float angularStep;
-        //Weapon weapon;
+        int healt;
+        int level;
+        // Square
         float squareSide;
+        int id;
+
+        int randomObject;
+        int randomPosition;
+        float clock;
+        bool addEnemy;
+        bool generateStars;
+        
         glm::vec3 corner;
         std::string squareCollorArray[6];
         std::string weaponCollorArray[5];
         std::string starCollorArray[5];
         std::string hexagonCollorArray[5];
         std::default_random_engine generator;
-        std::vector<std::string> enemyArray;
-        int randomNumber;
-        int clock;
-        bool addEnemy;
+        std::vector<Enemy> enemyArray;
+        // Time evidence
+        std::chrono::seconds elapsedEnemyTime;
+        std::chrono::time_point<std::chrono::high_resolution_clock> generateEnemycurrentTime;
+        std::chrono::time_point<std::chrono::high_resolution_clock> generateEnemyLastUpdateTime;
+        std::chrono::seconds elapsedStarTime;
+        std::chrono::time_point<std::chrono::high_resolution_clock> generateStarcurrentTime;
+        std::chrono::time_point<std::chrono::high_resolution_clock> generateStarLastUpdateTime;
 
         // TODO(student): If you need any other class variables, define them here.
     };

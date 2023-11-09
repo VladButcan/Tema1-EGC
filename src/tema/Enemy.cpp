@@ -2,34 +2,49 @@
 
 using namespace tema;
 
-Enemy::Enemy(int id, std::string color) {
-    this.id = id;
-    this.color = color;
-    switch (color) {
-        case "orangeHexagon":
-            this.healt = 3;
-        case "blueHexagon":
-            this.healt = 4;
-        case "yellowHexagon":
-            this.healt = 5;
-        case "purpleHexagon":
-            this.healt = 6;
+Enemy::Enemy(int newId, std::string newColor, float x, float y): id(newId), color(newColor), posX(x), posY(y) {
+    if (color == "orangeHexagon") {
+        healt = 3;
+    } else {
+        if (color == "blueHexagon") {
+            healt = 4;
+        } else {
+            if (color == "yellowHexagon") {
+                healt = 5;
+            } else {
+                    healt = 6;
+            }
+        }
     }
 }
 
 std::string Enemy::getColor()
 {
-    return this.color;
+    return color;
 }
 
 int Enemy::getId() {
-    return this.id; 
+    return id; 
 }
 
 int Enemy::getHealt() {
-    return this.healt; 
+    return healt; 
 }
 
-void Enemy::setHealt(int healt) {
-    this.healt = healt;
+void Enemy::setHealt(int newHealt) {
+    healt = newHealt;
+}
+float Enemy::getPosX() {
+    return posX;
+}
+float Enemy::getPosY() {
+    return posY;
+}
+
+void Enemy::setPosX(float x) {
+    posX = x;
+}
+
+void Enemy::setPosY(float y) {
+    posY = y;
 }

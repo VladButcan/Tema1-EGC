@@ -36,43 +36,36 @@ void Lab3::Init()
     camera->SetRotation(glm::vec3(0, 0, 0));
     camera->Update();
     GetCameraInput()->SetActive(false);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
     corner = glm::vec3(0, 0, 0);
     squareSide = 100;
     
-
-    // TODO(student): Compute coordinates of a square's center, and store
-    // then in the `cx` and `cy` class variables (see the header). Use
-    // `corner` and `squareSide`. These two class variables will be used
-    // in the `Update()` function. Think about it, why do you need them?
-
     // Initialize tx and ty (the translation steps)
-    translateX = 0;
+    translateX = 50;
     translateY = 0;
 
     // Initialize sx and sy (the scale factors)
     scaleX = 1;
     scaleY = 1;
+    clock = 0.0;
 
+    id = 0;
     
     angularStep = 0;
     InitSquares();
     InitWeapons();
     InitStars();
-    /*Mesh* blockSquare = object2D::CreateTransparentSquare("blockSquare", corner, squareSide, glm::vec4(1, 1, 1, 0.1f));
-    AddMeshToList(blockSquare);*/
+    InitHexagons();
 
-    Mesh* triangle = object2D::CreateTriangle("triangle", corner, squareSide, glm::vec3(1, 0, 0), true);
-    AddMeshToList(triangle);
+    generateEnemyLastUpdateTime = std::chrono::high_resolution_clock::now();
+    generateStarLastUpdateTime = generateEnemyLastUpdateTime;
 
-    Mesh* hexagon = object2D::CreateHexagon("hexagon", corner, squareSide, glm::vec3(1, 0, 0), true);
-    AddMeshToList(hexagon);
-
-    //Mesh* star = object2D::CreateStar("star", corner, squareSide, glm::vec3(1, 0, 0), true);
-    //AddMeshToList(star);
-
-    /*Mesh* weapon = object2D::CreateWeapon("weapon", corner, squareSide, glm::vec3(1, 0, 0), true);
-    AddMeshToList(weapon);*/
+    //Game
+    healt = 4;
+    addEnemy = false;
+    generateStars = true;
 }
 
 
@@ -90,10 +83,11 @@ void Lab3::FrameStart()
 
 void Lab3::Update(float deltaTimeSeconds)
 {
+    
     RenderArena();
     RenderHealt();
     RenderWeapons();
-    modelMatrix = glm::mat3(1);
+    /*modelMatrix = glm::mat3(1);
     modelMatrix *= transform2D::Translate(600, 25);
     RenderMesh2D(meshes["hexagon"], shaders["VertexColor"], modelMatrix);
     modelMatrix = glm::mat3(1);
@@ -104,30 +98,34 @@ void Lab3::Update(float deltaTimeSeconds)
 
     modelMatrix = glm::mat3(1);
     modelMatrix *= transform2D::Translate(900, 25);
-    RenderMesh2D(meshes["star"], shaders["VertexColor"], modelMatrix);
-    clock += deltaTimeSeconds;
-    if (clock >= 3) {
-        clock = 0;
+    RenderMesh2D(meshes["star"], shaders["VertexColor"], modelMatrix);*/
+
+    generateEnemycurrentTime = std::chrono::high_resolution_clock::now();
+    elapsedEnemyTime = std::chrono::duration_cast<std::chrono::seconds>(generateEnemycurrentTime - generateEnemyLastUpdateTime);
+
+    generateStarcurrentTime = generateEnemycurrentTime;
+    elapsedStarTime = std::chrono::duration_cast<std::chrono::seconds>(generateStarcurrentTime - generateStarLastUpdateTime);
+
+
+    if (elapsedEnemyTime >= std::chrono::seconds(5)) {
+        generateEnemyLastUpdateTime = generateEnemycurrentTime;
         addEnemy = true;
     }
-    RenderEnemy();
+
+    if (elapsedStarTime >= std::chrono::seconds(10)) {
+        generateStarLastUpdateTime = generateStarcurrentTime;
+    }
 
 
-    /*modelMatrix = glm::mat3(1);
-    modelMatrix *= transform2D::Translate(900, 25);
-    RenderMesh2D(meshes["weapon"], shaders["VertexColor"], modelMatrix);*/
 
-    /*for (int i = 0; i < 6; i++) {
-        modelMatrix = glm::mat3(1);
-        modelMatrix *= transform2D::Translate(800, 200);
-        modelMatrix *= transform2D::Scale(0.5, 0.5);
-        modelMatrix *= transform2D::Rotate(3.14 * 2 / 6 * i);
-        modelMatrix *= transform2D::Translate(-50, -13);
-        modelMatrix *= transform2D::Translate(50, 50);
-        modelMatrix *= transform2D::Rotate(3.14);
-        modelMatrix *= transform2D::Translate(-50, -50);
-        RenderMesh2D(meshes["triangle"], shaders["VertexColor"], modelMatrix);
-    }*/
+    if (healt == 0) {
+        translateX = 0;
+        addEnemy = false;
+    }
+    
+    RenderEnemy(translateX * deltaTimeSeconds);
+
+    
 }
 
 
@@ -255,6 +253,27 @@ void Lab3::InitStars()
     AddMeshToList(object2D::CreateStar("whiteStar", corner, squareSide, glm::vec3(1, 1, 1), true));
 }
 
+void Lab3::InitHexagons()
+{
+    // Define stars
+    hexagonCollorArray[0] = "orangeHexagon";
+    hexagonCollorArray[1] = "blueHexagon";
+    hexagonCollorArray[2] = "yellowHexagon";
+    hexagonCollorArray[3] = "purpleHexagon";
+
+    AddMeshToList(object2D::CreateHexagon("redHexagon", corner, squareSide, glm::vec3(1, 0, 0), true));
+
+    AddMeshToList(object2D::CreateHexagon("blueHexagon", corner, squareSide, glm::vec3(0, 0, 1), true));
+
+    AddMeshToList(object2D::CreateHexagon("orangeHexagon", corner, squareSide, glm::vec3(1, 0.5, 0), true));
+
+    AddMeshToList(object2D::CreateHexagon("yellowHexagon", corner, squareSide, glm::vec3(1, 1, 0), true));
+
+    AddMeshToList(object2D::CreateHexagon("purpleHexagon", corner, squareSide, glm::vec3(0.5, 0, 0.5), true));
+
+    AddMeshToList(object2D::CreateHexagon("whiteHexagon", corner, squareSide, glm::vec3(1, 1, 1), true));
+}
+
 
 void Lab3::RenderArena()
 {
@@ -275,7 +294,7 @@ void Lab3::RenderArena()
 
 void Lab3::RenderHealt()
 {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < healt; i++) {
         modelMatrix = glm::mat3(1);
         modelMatrix *= transform2D::Translate(800 + (i * 2 * 60), 600);
         RenderMesh2D(meshes["redSquare"], shaders["VertexColor"], modelMatrix);
@@ -310,21 +329,28 @@ void Lab3::RenderStar(int translateX, int translateY)
         RenderMesh2D(meshes["whiteStar"], shaders["VertexColor"], modelMatrix);
 }
 
-void Lab3::RenderEnemy()
+void Lab3::RenderEnemy(float translateX)
 {
     if (addEnemy == true) {
         addEnemy = false;
-        std::uniform_int_distribution<int> distribution(0, 4);
-        randomNumber = distribution(generator);
-        enemyArray.push_back(hexagonCollorArray[randomNumber]);
+        std::uniform_int_distribution<int> distribution1(0, 3);
+        randomObject = distribution1(generator);
+        std::uniform_int_distribution<int> distribution2(0, 2);
+        randomPosition = distribution2(generator);
+        Enemy enemy(id, hexagonCollorArray[randomObject], 1200, 50 + (randomPosition % 3 * 140));
+        enemyArray.push_back(enemy);
     }
     for (int i = 0; i < enemyArray.size(); i++) {
-
+        modelMatrix = glm::mat3(1);
+        modelMatrix *= transform2D::Translate(enemyArray[i].getPosX() - translateX, enemyArray[i].getPosY());
+        enemyArray[i].setPosX(enemyArray[i].getPosX() - translateX);
+        modelMatrix *= transform2D::Scale(0.4, 0.4);
+        RenderMesh2D(meshes[enemyArray[i].getColor()], shaders["VertexColor"], modelMatrix);
+        if (enemyArray[i].getPosX() <= 20.0) {
+            healt -= 1;
+            enemyArray.erase(enemyArray.begin() + i);
+        }
     }
-    modelMatrix = glm::mat3(1);
-    modelMatrix *= transform2D::Translate(translateX, translateY - 25);
-    modelMatrix *= transform2D::Scale(0.2, 0.2);
-    RenderMesh2D(meshes["whiteStar"], shaders["VertexColor"], modelMatrix);
 }
 
 //void Lab3::RenderBlockSquare(int translateX, int translateY)
