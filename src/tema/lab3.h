@@ -60,7 +60,7 @@ namespace tema
         // On mouse scrole functions
         void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
         void OnWindowResize(int width, int height) override;
-        void GetTime(float deltaTimeSeconds);
+        void GetTime();
         void InitSquares();
         void InitWeapons();
         void InitStars();

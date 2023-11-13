@@ -161,7 +161,6 @@ void Lab3::Update(float deltaTimeSeconds)
 {
     resolution = window->GetResolution();
     viewSpace = ViewportSpace(0, 0, resolution.x, resolution.y);
-    //cout << "x = " << resolution.x << endl << "y = " << resolution.y << endl;
     SetViewportArea(viewSpace, glm::vec3(0), true);
     visMatrix = glm::mat3(1);
     visMatrix *= VisualizationTransf2D(logicSpace, viewSpace);
@@ -170,20 +169,8 @@ void Lab3::Update(float deltaTimeSeconds)
     RenderHealt();
     RenderAvaibleWeapons();
     RenderAvaibleMoney();
-    /*modelMatrix = glm::mat3(1);
-    modelMatrix *= transform2D::Translate(600, 25);
-    RenderMesh2D(meshes["hexagon"], shaders["VertexColor"], modelMatrix);
-    modelMatrix = glm::mat3(1);
-    modelMatrix *= transform2D::Translate(650, 75);
-    modelMatrix *= transform2D::Scale(0.8, 0.8);
-    modelMatrix *= transform2D::Translate(-50, -50);
-    RenderMesh2D(meshes["hexagon"], shaders["VertexColor"], modelMatrix);
 
-    modelMatrix = glm::mat3(1);
-    modelMatrix *= transform2D::Translate(900, 25);
-    RenderMesh2D(meshes["star"], shaders["VertexColor"], modelMatrix);*/
-
-    GetTime(deltaTimeSeconds);
+    GetTime();
 
     if (playerHealt <= 0) {
         addEnemy = false;
@@ -200,25 +187,7 @@ void Lab3::Update(float deltaTimeSeconds)
     modelMatrix *= transform2D::Scale(weaponScale, weaponScale);
     RenderMesh2D(meshes[drawWeaponbyColor +"Weapon"], shaders["VertexColor"], modelMatrix);
 
-    /*if (dropTimer > 8.0) {
-        moneyStarsY -= 30 * deltaTimeSeconds;
-    }
-    else {
-        dropTimer = 10.0f;
-    }*/
-
     RenderMoneyStars(deltaTimeSeconds);
-
-    /*Heart heart("redCircle", -5.0, 5.0, 5.0);
-    AddMeshToList(object2D::CreateCircle("leftCircle", -4.7, 3.0, 5.0, glm::vec3(1, 0, 0), true));
-    AddMeshToList(object2D::CreateCircle("rightCircle", 4.7, 3.0, 5.0, glm::vec3(1, 0, 0), true));
-    AddMeshToList(object2D::CreateHeart("heart", glm::vec3(1, 0, 0), true));
-    modelMatrix = visMatrix;
-    modelMatrix *= transform2D::Translate(900, 200);
-    modelMatrix *= transform2D::Scale(10.0, 10.0);
-    RenderMesh2D(meshes["heart"], shaders["VertexColor"], modelMatrix);*/
-    //angle += deltaTimeSeconds;
-    //RenderBullet(50 * deltaTimeSeconds, angle);
 }
 
 
@@ -268,16 +237,6 @@ void Lab3::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)
 void Lab3::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods)
 {
     if (button == 1) {
-        /*for (int i = 0; i < moneyStarsArray.size(); i++) {
-            if (mouseX >= moneyStarsArray[i].getPosX() - 15
-                && mouseX <= moneyStarsArray[i].getPosX() + 15
-                && mouseY <= 720 - (moneyStarsArray[i].getPosY() - 15)
-                && mouseY >= 720 - (moneyStarsArray[i].getPosY() + 15)) {
-                moneyStarsToEliminate.push_back(moneyStarsArray[i]);
-                moneyStarsArray.erase(moneyStarsArray.begin() + i);
-                gameMoney++;
-            }
-        }*/
         for (auto money = moneyStarsArray.begin(); money != moneyStarsArray.end();) {
             if (mouseX >= money->getPosX() - 15
                 && mouseX <= money->getPosX() + 15
@@ -449,7 +408,7 @@ void Lab3::OnWindowResize(int width, int height)
 {
 }
 
-void Lab3::GetTime(float deltaTimeSeconds) {
+void Lab3::GetTime() {
     generateEnemycurrentTime = std::chrono::high_resolution_clock::now();
     elapsedEnemyTime = std::chrono::duration_cast<std::chrono::seconds>(generateEnemycurrentTime - generateEnemyLastUpdateTime);
 
@@ -705,7 +664,7 @@ void Lab3::RenderEnemy(float deltaTime)
             modelMatrix *= transform2D::Translate(enemy->getPosX() - 50 * deltaTime, enemy->getPosY());
             modelMatrix *= transform2D::Scale(enemy->getSize(), enemy->getSize());
 
-            enemy->setPosX(enemy->getPosX() - 100 * deltaTime);
+            enemy->setPosX(enemy->getPosX() - 50 * deltaTime);
             RenderMesh2D(meshes[enemy->getColor() + "Hexagon"], shaders["VertexColor"], modelMatrix);
             ++enemy;
         }
