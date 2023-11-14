@@ -4,15 +4,15 @@ using namespace tema;
 
 Enemy::Enemy(int newId, std::string newColor, float x, float y, float newSize): id(newId), color(newColor), posX(x), posY(y), size(newSize) {
     if (color == "orange") {
-        healt = 2.0f;
+        healt = 1.0f;
     } else {
         if (color == "blue") {
-            healt = 3.0f;
+            healt = 2.0f;
         } else {
             if (color == "yellow") {
-                healt = 4.0f;
+                healt = 3.0f;
             } else {
-                    healt = 5.0f;
+                    healt = 4.0f;
             }
         }
     }

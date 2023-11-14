@@ -50,12 +50,12 @@ void Lab3::Init()
     squareSide = 100;
     
     // Initialize tx and ty (the translation steps)
-    translateX = 50;
+    translateX = 0;
     translateY = 0;
 
     // Initialize sx and sy (the scale factors)
-    scaleX = 1;
-    scaleY = 1;
+    scaleX = 0;
+    scaleY = 0;
     clock = 0.0;
 
     angle = 0.0;
@@ -63,57 +63,53 @@ void Lab3::Init()
     id = 0;
     
     angularStep = 0;
+    
     // Init level mnumbers meshes
     InitLevelNumbers();
+    
     // Init figures
     InitSquares();
     InitWeapons();
     InitStars();
     InitHexagons();
 
-
-
-    generateEnemyLastUpdateTime = std::chrono::high_resolution_clock::now();
-    generateStarLastUpdateTime = generateEnemyLastUpdateTime;
-
     //Game
     level = 1;
-    playerHealt = 4;
     newLevel = false;
+    playerHealt = 4;
+    gameMoney = 4;
     selectBonus = false;
-    levelNumber = "one";
     newArenaSquares = false;
     arenaSquares = 3;
-    gameMoney = 4;
-    
-
-    //Money Stars
-    rainbowIndex = 0;
-
 
     // Enemy
+    generateEnemyLastUpdateTime = std::chrono::high_resolution_clock::now();
     enemyPerLevel = 10 + level * 4;
     enemyCounter = 0;
     enemyFrequenceInMiliSec = 7000;
     enemySpeed = 80.0f;
     addEnemy = false;
 
+    // Weapon
+    drawWeaponbyColor = "";
+    weaponScale = 4.0f;
+
+
     // Bullet
+    generateBulletBool = true;
     orangeBulletDamage = blueBulletDamage = yellowBulletDamage = purpleBulletDamage = 1.0f;
     orangeBulletSpeed = blueBulletSpeed = yellowBulletSpeed = purpleBulletSpeed = 100;
     firingSpeed = 2000;
 
-    //
-    
+    // Money Stars
+    generateStarLastUpdateTime = generateEnemyLastUpdateTime;
     generateStarsBool = true;
-    generateBulletBool = true;
-    drawWeaponbyColor = "";
-    weaponScale = 4.0f;
-    moneyStarsY = 700.0f;
-
+    rainbowIndex = 0;
+    
+    // Mouse
     mousePositionX = mousePositionY = 0;
 
-    //Scena
+    // Scena
 
     AddMeshToList(object2D::CreateStar("rainbowStar", corner, squareSide, glm::vec3(1, 1, 1), true));
     AddMeshToList(object2D::CreateTextDMG("dmg", glm::vec3(1, 1, 1)));
@@ -380,7 +376,7 @@ void Lab3::IndentifyMousePositionInWeaponBoxOnMouseButtonPress(int mouseX, int m
 }
 
 void Lab3::IndentifyMousePositionInBonusBoxOnMouseButtonPress(int mouseX, int mouseY) {
-    if (mouseX >= 25 && mouseX <= 125 && mouseY <= 300 && mouseY >= 200) {
+    if (mouseX >= 25 && mouseX <= 125 && mouseY <= 250 && mouseY >= 150) {
         if (gameMoney >= 20) {
             orangeBulletDamage += 0.25;
             blueBulletDamage += 0.25;
@@ -390,14 +386,14 @@ void Lab3::IndentifyMousePositionInBonusBoxOnMouseButtonPress(int mouseX, int mo
         }
     }
     else {
-        if (mouseX >= 175 && mouseX <= 275 && mouseY <= 300 && mouseY >= 200) {
+        if (mouseX >= 175 && mouseX <= 275 && mouseY <= 250 && mouseY >= 150) {
             if (gameMoney >= 20) {
-                firingSpeed -= 20;
+                firingSpeed -= 50;
                 gameMoney -= 20;
             }
         }
         else {
-            if (mouseX >= 325 && mouseX <= 425 && mouseY <= 300 && mouseY >= 200) {
+            if (mouseX >= 325 && mouseX <= 425 && mouseY <= 250 && mouseY >= 150) {
                 if (gameMoney >= 20) {
                     orangeBulletSpeed += 25;
                     blueBulletSpeed += 25;
@@ -407,7 +403,7 @@ void Lab3::IndentifyMousePositionInBonusBoxOnMouseButtonPress(int mouseX, int mo
                 }
             }
             else {
-                if (mouseX >= 475 && mouseX <= 575 && mouseY <= 300 && mouseY >= 200) {
+                if (mouseX >= 475 && mouseX <= 575 && mouseY <= 250 && mouseY >= 150) {
                     if (gameMoney >= 300) {
                         newArenaSquares = true;
                         arenaSquares++;
@@ -476,7 +472,7 @@ void Lab3::SelectBonus(int mouseX, int mouseY)
         newLevel = false;
         level += 1;
         if (level % 2 == 0) {
-            enemyFrequenceInMiliSec -= 100;
+            enemyFrequenceInMiliSec -= 1000;
         }
         enemyPerLevel = 2 + level * 4;
         enemyCounter = 0;
@@ -495,7 +491,7 @@ void Lab3::SelectBonus(int mouseX, int mouseY)
             newLevel = false;
             level += 1;
             if (level % 2 == 0) {
-                enemyFrequenceInMiliSec -= 100;
+                enemyFrequenceInMiliSec -= 200;
             }
             enemyPerLevel = 2 + level * 4;
             enemyCounter = 0;
@@ -700,7 +696,6 @@ void Lab3::GetTime() {
     if (elapsedStarTime >= std::chrono::seconds(3)) {
         generateStarLastUpdateTime = generateStarcurrentTime;
         generateStarsBool = true;
-        moneyStarsY = 700.0f;
     }
 
 
@@ -1108,8 +1103,8 @@ void Lab3::EliminateEmeny()
         enemyElimination = CheckBulletEnemyColision(enemy);
         if (enemyElimination == true) {
             if (enemy->getHealt() <= 0) {
-                if (enemy->getColor() == "orange" || enemy->getColor() == "blue") gameMoney += 2;
-                if (enemy->getColor() == "yellow" || enemy->getColor() == "purple") gameMoney += 3;
+                if (enemy->getColor() == "orange" || enemy->getColor() == "blue") gameMoney += 4;
+                if (enemy->getColor() == "yellow" || enemy->getColor() == "purple") gameMoney += 6;
                 enemiesToEliminate.push_back(*enemy);
                 enemy = enemyArray.erase(enemy);
             }
@@ -1256,8 +1251,11 @@ void Lab3::RenderBonuses()
 {
     // Render DMG Bonus
     // ===================================================================================
-    translateX = 25 + (0 * 2 * 75);
-    translateY = resolution.y - 300;
+    float translateX = 25 + (0 * 2 * 75);
+    float translateY = resolution.y - 300;
+    //if (resolution.y < 900) {
+        translateY += 50;
+    //}
     // Render White Box
     modelMatrix = matrixForRender;
     modelMatrix *= transform2D::Translate(squareSide / 2, squareSide / 2);
@@ -1312,7 +1310,6 @@ void Lab3::RenderBonuses()
     // Render Weapon Speed Bonus
     // ===================================================================================
     translateX = 25 + (1 * 2 * 75);
-    translateY = resolution.y - 300;
     // Render White Box
     modelMatrix = matrixForRender;
     modelMatrix *= transform2D::Translate(squareSide / 2, squareSide / 2);
@@ -1370,7 +1367,6 @@ void Lab3::RenderBonuses()
     // Render Bullet Speed Bonus
     // ===================================================================================
     translateX = 25 + (2 * 2 * 75);
-    translateY = resolution.y - 300;
     // Render White Box
     modelMatrix = matrixForRender;
     modelMatrix *= transform2D::Translate(squareSide / 2, squareSide / 2);
@@ -1426,8 +1422,6 @@ void Lab3::RenderBonuses()
     // ===================================================================================
     if (newArenaSquares == false) {
         translateX = 25 + (3 * 2 * 75);
-        translateY = resolution.y - 300;
-
         // Render White Box
         modelMatrix = matrixForRender;
         modelMatrix *= transform2D::Translate(squareSide / 2, squareSide / 2);

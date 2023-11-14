@@ -153,7 +153,6 @@ namespace tema
 
 
         //Money Stars
-        float moneyStarsY;
         bool generateStarsBool;
         float rainbowIndex;
 
@@ -173,7 +172,6 @@ namespace tema
         // Level
         int level;
         bool newLevel;
-        std::string levelNumber;
 
         // Enemy
         int enemyPerLevel;
