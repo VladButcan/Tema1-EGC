@@ -83,6 +83,8 @@ void Lab3::Init()
     selectBonus = false;
     levelNumber = "one";
     newArenaSquares = false;
+    arenaSquares = 3;
+    gameMoney = 4;
     
 
     //Money Stars
@@ -92,7 +94,7 @@ void Lab3::Init()
     // Enemy
     enemyPerLevel = 10 + level * 4;
     enemyCounter = 0;
-    enemyFrequenceInSec = 7;
+    enemyFrequenceInMiliSec = 7000;
     enemySpeed = 80.0f;
     addEnemy = false;
 
@@ -102,7 +104,7 @@ void Lab3::Init()
     firingSpeed = 2000;
 
     //
-    gameMoney = 4;
+    
     generateStarsBool = true;
     generateBulletBool = true;
     drawWeaponbyColor = "";
@@ -243,7 +245,7 @@ void Lab3::Update(float deltaTimeSeconds)
 
         RenderWeapon(deltaTimeSeconds);
         RenderEnemy(deltaTimeSeconds);
-        RenderBullet(deltaTimeSeconds, 0.0f);
+        RenderBullet(deltaTimeSeconds);
         EliminationByShrinking(deltaTimeSeconds);
 
         modelMatrix = matrixForRender;
@@ -380,10 +382,10 @@ void Lab3::IndentifyMousePositionInWeaponBoxOnMouseButtonPress(int mouseX, int m
 void Lab3::IndentifyMousePositionInBonusBoxOnMouseButtonPress(int mouseX, int mouseY) {
     if (mouseX >= 25 && mouseX <= 125 && mouseY <= 300 && mouseY >= 200) {
         if (gameMoney >= 20) {
-            orangeBulletDamage += 0.5;
-            blueBulletDamage += 0.5;
-            yellowBulletDamage += 0.5;
-            purpleBulletDamage += 0.5;
+            orangeBulletDamage += 0.25;
+            blueBulletDamage += 0.25;
+            yellowBulletDamage += 0.25;
+            purpleBulletDamage += 0.25;
             gameMoney -= 20;
         }
     }
@@ -396,19 +398,20 @@ void Lab3::IndentifyMousePositionInBonusBoxOnMouseButtonPress(int mouseX, int mo
         }
         else {
             if (mouseX >= 325 && mouseX <= 425 && mouseY <= 300 && mouseY >= 200) {
-                if (gameMoney >= 40) {
-                    orangeBulletDamage += 1;
-                    blueBulletDamage += 1;
-                    yellowBulletDamage += 1;
-                    purpleBulletDamage += 1;
-                    gameMoney -= 40;
+                if (gameMoney >= 20) {
+                    orangeBulletSpeed += 25;
+                    blueBulletSpeed += 25;
+                    yellowBulletSpeed += 25;
+                    purpleBulletSpeed += 25;
+                    gameMoney -= 20;
                 }
             }
             else {
                 if (mouseX >= 475 && mouseX <= 575 && mouseY <= 300 && mouseY >= 200) {
-                    if (gameMoney >= 40) {
-                        firingSpeed -= 50;
-                        gameMoney -= 40;
+                    if (gameMoney >= 300) {
+                        newArenaSquares = true;
+                        arenaSquares++;
+                        gameMoney -= 300;
                     }
                 }
             }
@@ -428,6 +431,13 @@ void Lab3::IdentifyMousePositionInArenaBoxesOnMouseButtonPress(int mouseX, int m
             if (mouseX >= 375 && mouseX <= 475) {
                 objectPositionX = 375;
             }
+            else {
+                if (newArenaSquares == true) {
+                    if (mouseX >= 525 && mouseX <= 625) {
+                        objectPositionX = 525;
+                    }
+                }
+            }
         }
     }
 
@@ -441,6 +451,13 @@ void Lab3::IdentifyMousePositionInArenaBoxesOnMouseButtonPress(int mouseX, int m
         else {
             if (mouseY <= resolution.y - 305 && mouseY >= resolution.y - 405) {
                 objectPositionY = 305;
+            }
+            else {
+                if (newArenaSquares == true) {
+                    if (mouseY <= resolution.y - 445 && mouseY >= resolution.y - 545) {
+                        objectPositionY = 445;
+                    }
+                }
             }
         }
     }
@@ -459,11 +476,12 @@ void Lab3::SelectBonus(int mouseX, int mouseY)
         newLevel = false;
         level += 1;
         if (level % 2 == 0) {
-            enemyFrequenceInSec -= 1;
+            enemyFrequenceInMiliSec -= 100;
         }
         enemyPerLevel = 2 + level * 4;
         enemyCounter = 0;
         bulletArray.clear();
+        
     }
     else {
         if (mouseX >= 3 * resolution.x / 4 - 200
@@ -477,13 +495,14 @@ void Lab3::SelectBonus(int mouseX, int mouseY)
             newLevel = false;
             level += 1;
             if (level % 2 == 0) {
-                enemyFrequenceInSec -= 1;
+                enemyFrequenceInMiliSec -= 100;
             }
-            enemyPerLevel = 10 + level * 5;
+            enemyPerLevel = 2 + level * 4;
             enemyCounter = 0;
             bulletArray.clear();
         }
     }
+    
 }
 
 void Lab3::DeleteWeapon(float objectPositionX, float objectPositionY)
@@ -531,30 +550,44 @@ void Lab3::OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods)
     // Add mouse button release event
     if (button == 1) {
         float generateObjectX = 0.0f, generateObjectY = 0.0f;
-        if (mouseX >= 75 + (0 * 2 * 75) && mouseX <= 75 + (0 * 2 * 75) + 100) {
+        if (mouseX >= 75 && mouseX <= 175) {
             generateObjectX = 75 + (0 * 2 * 75);
         }
         else {
-            if (mouseX >= 75 + (1 * 2 * 75) && mouseX <= 75 + (1 * 2 * 75) + 100) {
+            if (mouseX >= 225 && mouseX <= 325) {
                 generateObjectX = 75 + (1 * 2 * 75);
             }
             else {
-                if (mouseX >= 75 + (2 * 2 * 75) && mouseX <= 75 + (2 * 2 * 75) + 100) {
+                if (mouseX >= 375 && mouseX <= 475) {
                     generateObjectX = 75 + (2 * 2 * 75);
+                }
+                else {
+                    if (newArenaSquares == true) {
+                        if (mouseX >= 525 && mouseX <= 625) {
+                            generateObjectX = 525;
+                        }
+                    }
                 }
             }
         }
 
-        if (mouseY <= resolution.y - (25 + (0 % 3 * 140)) && mouseY >= resolution.y - (25 + (0 % 3 * 140) + 100)) {
+        if (mouseY <= resolution.y - 25 && mouseY >= resolution.y - 125) {
             generateObjectY = (25 + (0 % 3 * 140));
         }
         else {
-            if (mouseY <= resolution.y - (25 + (1 % 3 * 140)) && mouseY >= resolution.y - (25 + (1 % 3 * 140) + 100)) {
+            if (mouseY <= resolution.y - 165 && mouseY >= resolution.y - 265) {
                 generateObjectY = (25 + (1 % 3 * 140));
             }
             else {
-                if (mouseY <= resolution.y - (25 + (2 % 3 * 140)) && mouseY >= resolution.y - (25 + (2 % 3 * 140) + 100)) {
+                if (mouseY <= resolution.y - 305 && mouseY >= resolution.y - 405) {
                     generateObjectY = (25 + (2 % 3 * 140));
+                }
+                else {
+                    if (newArenaSquares == true) {
+                        if (mouseY <= resolution.y - 445 && mouseY >= resolution.y - 545) {
+                            generateObjectY = 445;
+                        }
+                    }
                 }
             }
         }
@@ -619,63 +652,25 @@ void Lab3::OnWindowResize(int width, int height)
 
 void Lab3::ShowLevel()
 {
-    switch (level)
-    {
-    case 0:
-        levelNumber = "zero"; break;
-    case 1:
-        levelNumber = "one"; break;
-    case 2:
-        levelNumber = "two"; break;
-    case 3:
-        levelNumber = "three"; break;
-    case 4:
-        levelNumber = "four"; break;
-    case 5:
-        levelNumber = "five"; break;
-    case 6:
-        levelNumber = "six"; break;
-    case 7:
-        levelNumber = "seven"; break;
-    case 8:
-        levelNumber = "eight"; break;
-    case 9:
-        levelNumber = "nine"; break;
-    default:
-        levelNumber = "";
-    }
     modelMatrix = matrixForRender;
-    modelMatrix *= transform2D::Translate(700, 200);
+    modelMatrix *= transform2D::Translate(resolution.x - 200, 200);
     modelMatrix *= transform2D::Scale(10, 10);
-    RenderMesh2D(meshes[levelNumber], shaders["VertexColor"], modelMatrix);
+    int copy = level;
+    while (copy != 0) {
+        RenderMesh2D(meshes[numbersArray[copy % 10]], shaders["VertexColor"], modelMatrix);
+        modelMatrix *= transform2D::Translate(-20, 0);
+        copy /= 10;
+    }
 }
 
 void Lab3::GetTime() {
     // Get time moment
-    generateEnemycurrentTime = std::chrono::high_resolution_clock::now();
-    elapsedEnemyTime = std::chrono::duration_cast<std::chrono::seconds>(generateEnemycurrentTime - generateEnemyLastUpdateTime);
-
-    generateStarcurrentTime = generateEnemycurrentTime;
-    elapsedStarTime = std::chrono::duration_cast<std::chrono::seconds>(generateStarcurrentTime - generateStarLastUpdateTime);
-
-    generateBulletcurrentTime = generateEnemycurrentTime;
-    elapsedBulletTime = std::chrono::duration_cast<std::chrono::seconds>(generateBulletcurrentTime - generateBulletLastUpdateTime);
-
-    generateButtonCurrentTime = generateEnemycurrentTime;
-    elapsedButtonTime = std::chrono::duration_cast<std::chrono::seconds>(generateButtonCurrentTime - generateButtonLastUpdateTime);
-
-
-    // Button reset
-    if (elapsedButtonTime >= std::chrono::seconds(2)) {
-        generateButtonLastUpdateTime = generateButtonCurrentTime;
-        S_On = false;
-        K_On = false;
-        I_On = false;
-        P_On = false;
-    }
+    currentTime = std::chrono::high_resolution_clock::now();
 
     // Enemy generator
-    if (elapsedEnemyTime >= std::chrono::seconds(enemyFrequenceInSec)) {
+    generateEnemycurrentTime = currentTime;
+    elapsedEnemyTime = std::chrono::duration_cast<std::chrono::milliseconds>(generateEnemycurrentTime - generateEnemyLastUpdateTime);
+    if (elapsedEnemyTime >= std::chrono::milliseconds(enemyFrequenceInMiliSec)) {
         generateEnemyLastUpdateTime = generateEnemycurrentTime;
         addEnemy = true;
         enemyCounter++;
@@ -686,12 +681,28 @@ void Lab3::GetTime() {
 
     }
 
+
+    // Button reset
+    generateButtonCurrentTime = currentTime;
+    elapsedButtonTime = std::chrono::duration_cast<std::chrono::seconds>(generateButtonCurrentTime - generateButtonLastUpdateTime);
+    if (elapsedButtonTime >= std::chrono::seconds(2)) {
+        generateButtonLastUpdateTime = generateButtonCurrentTime;
+        S_On = false;
+        K_On = false;
+        I_On = false;
+        P_On = false;
+    }
+    
+
     // Money generator
+    generateStarcurrentTime = currentTime;
+    elapsedStarTime = std::chrono::duration_cast<std::chrono::seconds>(generateStarcurrentTime - generateStarLastUpdateTime);
     if (elapsedStarTime >= std::chrono::seconds(3)) {
         generateStarLastUpdateTime = generateStarcurrentTime;
         generateStarsBool = true;
         moneyStarsY = 700.0f;
     }
+
 
     // Weapon shooting timer
     for (auto weapon = weaponArray.begin(); weapon != weaponArray.end();) {
@@ -830,7 +841,7 @@ void Lab3::RenderArenaSquares()
     RenderMesh2D(meshes["redSquare"], shaders["VertexColor"], modelMatrix);
 
     for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < arenaSquares; j++) {
             modelMatrix = matrixForRender;
             modelMatrix *= transform2D::Translate(squareSide / 2, squareSide / 2);
             modelMatrix *= transform2D::Translate(75 + (j * 2 * 75), 25 + (i % 3 * 140));
@@ -928,9 +939,14 @@ void Lab3::RenderAvaibleMoney()
     modelMatrix *= transform2D::Scale(1.5, 1.5);
     RenderMesh2D(meshes["whiteStar"], shaders["VertexColor"], modelMatrix);
 }
- 
+
+
 void Lab3::RenderWeapon(float deltaTime)
 {
+    for (auto enemy = enemyArray.begin(); enemy != enemyArray.end();) {
+        CheckWeaponEnemyColision(enemy);
+        ++enemy;
+    }
     for (int i = 0; i < weaponArray.size(); i++) {
         modelMatrix = matrixForRender;
         modelMatrix *= transform2D::Translate(weaponArray[i].getPosX(), weaponArray[i].getPosY());
@@ -938,6 +954,27 @@ void Lab3::RenderWeapon(float deltaTime)
         RenderMesh2D(meshes[weaponArray[i].getColor() + "Weapon"], shaders["VertexColor"], modelMatrix);
     }
 }
+
+
+void Lab3::CheckWeaponEnemyColision(std::vector<Enemy>::iterator enemy)
+{
+    for (auto weapon = weaponArray.begin(); weapon != weaponArray.end();) {
+        if (enemy->getPosY() == weapon->getPosY()) {
+            if (enemy->getPosX() > weapon->getPosX() && (enemy->getPosX() - weapon->getPosX() <= enemy->getRadius() + weapon->getRadius())) {
+                weaponsToEliminate.push_back(*weapon);
+                weapon = weaponArray.erase(weapon);
+            }
+            else {
+                ++weapon;
+            }
+        }
+        else {
+            ++weapon;
+        }
+    }
+}
+
+
 
 void Lab3::RenderEnemy(float deltaTime)
 {
@@ -987,6 +1024,165 @@ void Lab3::AddEnemyInGame() {
     id++;
     enemyArray.push_back(enemy);
 }
+
+
+void Lab3::RenderBullet(float deltaTimeSecond)
+{
+    GenerateBullet();
+    EliminateEmeny();
+
+    for (auto bullet = bulletArray.begin(); bullet != bulletArray.end();) {
+
+        if (bullet->getPosX() > resolution.x) {
+            bulletToEliminate.push_back(*bullet);
+            bullet = bulletArray.erase(bullet);
+        }
+        else {
+            modelMatrix = matrixForRender;
+            modelMatrix *= transform2D::Translate(bullet->getPosX(), bullet->getPosY());
+            modelMatrix *= transform2D::Scale(bullet->getSize(), bullet->getSize());
+            modelMatrix *= transform2D::Rotate(-bullet->getAngle());
+            RenderMesh2D(meshes[bullet->getColor() + "Star"], shaders["VertexColor"], modelMatrix);
+            bullet->setPosX(bullet->getPosX() + bullet->speed * deltaTimeSecond);
+            bullet->setAngle(bullet->getAngle() + 3 * deltaTimeSecond);
+            ++bullet;
+        }
+    }
+}
+
+
+void Lab3::GenerateBullet() {
+    bool genBullet = false;
+    for (auto weapon = weaponArray.begin(); weapon != weaponArray.end();) {
+        genBullet = false;
+        if (weapon->renderBullet == true) {
+            weapon->renderBullet = false;
+            for (auto enemy = enemyArray.begin(); enemy != enemyArray.end();) {
+                if (weapon->getPosY() == enemy->getPosY() && weapon->getColor() == enemy->getColor()) {
+                    genBullet = true;
+                }
+                ++enemy;
+            }
+        }
+        if (genBullet == true) {
+            Bullet bullet(id, weapon->getColor(), weapon->getPosX() + 20.0f, weapon->getPosY(), 3.0f, 0.0f);
+            bullet.setRadius(bullet.getRadius() * 3.0f);
+            SetBulletDamageAndSpeed(bullet);
+            bulletArray.push_back(bullet);
+        }
+        ++weapon;
+    }
+}
+
+void Lab3::SetBulletDamageAndSpeed(Bullet &bullet)
+{
+    if (bullet.getColor() == "blue") {
+        bullet.damage = blueBulletDamage;
+        bullet.speed = blueBulletSpeed;
+    }
+    else {
+        if (bullet.getColor() == "orange") {
+            bullet.damage = orangeBulletDamage;
+            bullet.speed = orangeBulletSpeed;
+        }
+        else {
+            if (bullet.getColor() == "yellow") {
+                bullet.damage = yellowBulletDamage;
+                bullet.speed = yellowBulletSpeed;
+            }
+            else {
+                if (bullet.getColor() == "purple") {
+                    bullet.damage = purpleBulletDamage;
+                    bullet.speed = purpleBulletSpeed;
+                }
+            }
+        }
+    }
+}
+
+void Lab3::EliminateEmeny()
+{
+    bool enemyElimination = false;
+    for (auto enemy = enemyArray.begin(); enemy != enemyArray.end();) {
+        enemyElimination = false;
+        enemyElimination = CheckBulletEnemyColision(enemy);
+        if (enemyElimination == true) {
+            if (enemy->getHealt() <= 0) {
+                if (enemy->getColor() == "orange" || enemy->getColor() == "blue") gameMoney += 2;
+                if (enemy->getColor() == "yellow" || enemy->getColor() == "purple") gameMoney += 3;
+                enemiesToEliminate.push_back(*enemy);
+                enemy = enemyArray.erase(enemy);
+            }
+            else {
+                ++enemy;
+            }
+
+        }
+        else {
+            ++enemy;
+        }
+    }
+}
+
+bool Lab3::CheckBulletEnemyColision(std::vector<Enemy>::iterator enemy)
+{
+    bool enemyElimination = false;
+    for (auto bullet = bulletArray.begin(); bullet != bulletArray.end();) {
+        if (bullet->getPosY() == enemy->getPosY() && bullet->getColor() == enemy->getColor()) {
+            if ((enemy->getPosX() > bullet->getPosX()) && (enemy->getPosX() - bullet->getPosX() <= enemy->getRadius() + bullet->getRadius())) {
+                enemyElimination = true;
+                enemy->setHealt(enemy->getHealt() - bullet->damage);
+                bulletToEliminate.push_back(*bullet);
+                bullet = bulletArray.erase(bullet);
+            }
+            else {
+                ++bullet;
+            }
+        }
+        else {
+            ++bullet;
+        }
+    }
+    return enemyElimination;
+}
+
+
+void Lab3::RenderMoneyStars(float deltaTimeSecond)
+{
+    // Change color
+    rainbowIndex += deltaTimeSecond;
+    float red = 0.5f + 0.5f * sin(rainbowIndex);
+    float green = 0.5f + 0.5f * sin(rainbowIndex + 2.0f);
+    float blue = 0.5f + 0.5f * sin(rainbowIndex + 4.0f);
+    AddMeshToList(object2D::CreateStar("rainbowStar", corner, squareSide, glm::vec3(red, green, blue), true));
+
+    std::mt19937 generator(rd());
+    std::uniform_int_distribution<int> distribution1(600, resolution.x);
+
+    if (generateStarsBool == true) {
+        generateStarsBool = false;
+        int xPos = distribution1(generator);
+        MoneyStars moneyStar("rainbowStar", xPos, resolution.y - 100, 3.0f);
+        moneyStarsArray.push_back(moneyStar);
+    }
+
+    for (auto money = moneyStarsArray.begin(); money != moneyStarsArray.end();) {
+        if (money->getPosY() <= 5) {
+            //moneyStarsToEliminate.push_back(money);
+            moneyStarsToEliminate.push_back(*money);
+            money = moneyStarsArray.erase(money);
+        }
+        else {
+            modelMatrix = matrixForRender;
+            modelMatrix *= transform2D::Translate(money->getPosX(), money->getPosY());
+            modelMatrix *= transform2D::Scale(money->getSize(), money->getSize());
+            RenderMesh2D(meshes["rainbowStar"], shaders["VertexColor"], modelMatrix);
+            money->setPosY(money->getPosY() - 30 * deltaTimeSecond);
+            ++money;
+        }
+    }
+}
+
 
 void Lab3::EliminationByShrinking(float deltaTime)
 {
@@ -1055,176 +1251,6 @@ void Lab3::EliminationByShrinking(float deltaTime)
     }
 }
 
-void Lab3::RenderBullet(float deltaTimeSecond, float angle)
-{
-    bool genBullet = false;
-    for (auto weapon = weaponArray.begin(); weapon != weaponArray.end();) {
-        genBullet = false;
-        if (weapon->renderBullet == true) {
-            weapon->renderBullet = false;
-            for (auto enemy = enemyArray.begin(); enemy != enemyArray.end();) {
-                if (weapon->getPosY() == enemy->getPosY() && weapon->getColor() == enemy->getColor()) {
-                    genBullet = true;
-                }
-                ++enemy;
-            }
-        }
-        if (genBullet == true) {
-            Bullet bullet(id, weapon->getColor(), weapon->getPosX() + 20.0f, weapon->getPosY(), 3.0f, 0.0f);
-            bullet.setRadius(bullet.getRadius() * 3.0f);
-            SetBulletDamageAndSpeed(bullet);
-            bulletArray.push_back(bullet);
-        }
-        ++weapon;
-    }
-
-    bool enemyElimination = false;
-    for (auto enemy = enemyArray.begin(); enemy != enemyArray.end();) {
-        enemyElimination = false;
-        CheckWeaponEnemyColision(enemy);
-        enemyElimination = CheckBulletEnemyColision(enemy);
-
-        if (enemyElimination == true) {
-            //enemy->setHealt(enemy->getHealt() - bullet->damageHit);
-            //enemy->setHealt(enemy->getHealt() - 1.7f);
-            if (enemy->getHealt() <= 0) {
-                if (enemy->getColor() == "orange" || enemy->getColor() == "blue") gameMoney += 2;
-                if (enemy->getColor() == "yellow" || enemy->getColor() == "purple") gameMoney += 3;
-                enemiesToEliminate.push_back(*enemy);
-                enemy = enemyArray.erase(enemy);
-            }
-            else {
-                ++enemy;
-            }
-            
-        }
-        else {
-            ++enemy;
-        }
-    }
-
-    for (auto bullet = bulletArray.begin(); bullet != bulletArray.end();) {
-
-        if (bullet->getPosX() > resolution.x) {
-            bulletToEliminate.push_back(*bullet);
-            bullet = bulletArray.erase(bullet);
-        }
-        else {
-            modelMatrix = matrixForRender;
-            modelMatrix *= transform2D::Translate(bullet->getPosX(), bullet->getPosY());
-            modelMatrix *= transform2D::Scale(bullet->getSize(), bullet->getSize());
-            modelMatrix *= transform2D::Rotate(-bullet->getAngle());
-            RenderMesh2D(meshes[bullet->getColor() + "Star"], shaders["VertexColor"], modelMatrix);
-            bullet->setPosX(bullet->getPosX() + bullet->speed * deltaTimeSecond);
-            bullet->setAngle(bullet->getAngle() + 3 * deltaTimeSecond);
-            ++bullet;
-        }
-    }
-}
-
-void Lab3::SetBulletDamageAndSpeed(Bullet &bullet)
-{
-    if (bullet.getColor() == "blue") {
-        bullet.damage = blueBulletDamage;
-        bullet.speed = blueBulletSpeed;
-    }
-    else {
-        if (bullet.getColor() == "orange") {
-            bullet.damage = orangeBulletDamage;
-            bullet.speed = orangeBulletSpeed;
-        }
-        else {
-            if (bullet.getColor() == "yellow") {
-                bullet.damage = yellowBulletDamage;
-                bullet.speed = yellowBulletSpeed;
-            }
-            else {
-                if (bullet.getColor() == "purple") {
-                    bullet.damage = purpleBulletDamage;
-                    bullet.speed = purpleBulletSpeed;
-                }
-            }
-        }
-    }
-}
-void Lab3::CheckWeaponEnemyColision(std::vector<Enemy>::iterator enemy)
-{
-    for (auto weapon = weaponArray.begin(); weapon != weaponArray.end();) {
-        if (enemy->getPosY() == weapon->getPosY()) {
-            if (enemy->getPosX() > weapon->getPosX() && (enemy->getPosX() - weapon->getPosX() <= enemy->getRadius() + weapon->getRadius())) {
-                weaponsToEliminate.push_back(*weapon);
-                weapon = weaponArray.erase(weapon);
-            }
-            else {
-                ++weapon;
-            }
-        }
-        else {
-            ++weapon;
-        }
-    }
-}
-
-bool Lab3::CheckBulletEnemyColision(std::vector<Enemy>::iterator enemy)
-{
-    bool enemyElimination = false;
-    for (auto bullet = bulletArray.begin(); bullet != bulletArray.end();) {
-        if (bullet->getPosY() == enemy->getPosY() && bullet->getColor() == enemy->getColor()) {
-            if ((enemy->getPosX() > bullet->getPosX()) && (enemy->getPosX() - bullet->getPosX() <= enemy->getRadius() + bullet->getRadius())) {
-                enemyElimination = true;
-                enemy->setHealt(enemy->getHealt() - bullet->damage);
-                bulletToEliminate.push_back(*bullet);
-                bullet = bulletArray.erase(bullet);
-            }
-            else {
-                ++bullet;
-            }
-        }
-        else {
-            ++bullet;
-        }
-    }
-    return enemyElimination;
-}
-
-
-void Lab3::RenderMoneyStars(float deltaTimeSecond)
-{
-    // Change color
-    rainbowIndex += deltaTimeSecond;
-    float red = 0.5f + 0.5f * sin(rainbowIndex);
-    float green = 0.5f + 0.5f * sin(rainbowIndex + 2.0f);
-    float blue = 0.5f + 0.5f * sin(rainbowIndex + 4.0f);
-    AddMeshToList(object2D::CreateStar("rainbowStar", corner, squareSide, glm::vec3(red, green, blue), true));
-
-    std::mt19937 generator(rd());
-    std::uniform_int_distribution<int> distribution1(600, resolution.x);
-
-    if (generateStarsBool == true) {
-        generateStarsBool = false;
-        int xPos = distribution1(generator);
-        MoneyStars moneyStar("rainbowStar", xPos, resolution.y - 100, 3.0f);
-        moneyStarsArray.push_back(moneyStar);
-    }
-
-    for (auto money = moneyStarsArray.begin(); money != moneyStarsArray.end();) {
-        if (money->getPosY() <= 5) {
-            //moneyStarsToEliminate.push_back(money);
-            moneyStarsToEliminate.push_back(*money);
-            money = moneyStarsArray.erase(money);
-        }
-        else {
-            modelMatrix = matrixForRender;
-            modelMatrix *= transform2D::Translate(money->getPosX(), money->getPosY());
-            modelMatrix *= transform2D::Scale(money->getSize(), money->getSize());
-            RenderMesh2D(meshes["rainbowStar"], shaders["VertexColor"], modelMatrix);
-            money->setPosY(money->getPosY() - 30 * deltaTimeSecond);
-            ++money;
-        }
-        
-    }
-
-}
 
 void Lab3::RenderBonuses()
 {
@@ -1250,14 +1276,17 @@ void Lab3::RenderBonuses()
     modelMatrix *= transform2D::Scale(5, 0.2);
     RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
     // Render 0
-    modelMatrix *= transform2D::Translate(30, 0);
+    modelMatrix *= transform2D::Translate(20, 0);
     modelMatrix *= transform2D::Scale(1, 5);
     RenderMesh2D(meshes[numbersArray[0]], shaders["VertexColor"], modelMatrix);
     //Render dot
     modelMatrix *= transform2D::Translate(15, -10);
     RenderMesh2D(meshes["whiteCircle"], shaders["VertexColor"], modelMatrix);
-    //Render 5
+    //Render 2
     modelMatrix *= transform2D::Translate(15, 10);
+    RenderMesh2D(meshes[numbersArray[2]], shaders["VertexColor"], modelMatrix);
+    //Render 5
+    modelMatrix *= transform2D::Translate(20, 0);
     RenderMesh2D(meshes[numbersArray[5]], shaders["VertexColor"], modelMatrix);
     //Render DMG text
     modelMatrix *= transform2D::Translate(-30, -30);

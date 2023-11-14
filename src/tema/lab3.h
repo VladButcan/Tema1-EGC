@@ -88,8 +88,10 @@ namespace tema
         void RenderWeapon(float deltaTimeSecond);
         void RenderEnemy(float deltaTimeSecond);
         void AddEnemyInGame();
-        void RenderBullet(float deltaTimeSecond, float angle);
+        void RenderBullet(float deltaTimeSecond);
+        void GenerateBullet();
         void SetBulletDamageAndSpeed(Bullet &bullet);
+        void EliminateEmeny();
         void CheckWeaponEnemyColision(std::vector<Enemy>::iterator enemy);
         bool CheckBulletEnemyColision(std::vector<Enemy>::iterator enemy);
         void RenderMoneyStars(float deltaTimeSecond);
@@ -147,6 +149,7 @@ namespace tema
         float yResolution;
         float selectBonus;
         float newArenaSquares;
+        int arenaSquares;
 
 
         //Money Stars
@@ -175,7 +178,7 @@ namespace tema
         // Enemy
         int enemyPerLevel;
         int enemyCounter;
-        int enemyFrequenceInSec;
+        int enemyFrequenceInMiliSec;
         float enemySpeed;
 
         // Weapon
@@ -196,15 +199,13 @@ namespace tema
         std::vector<Bullet> indicesToEliminateBullets;
         std::vector<Enemy> indicesToEliminateEnemies;
         // Time evidence
-        std::chrono::seconds elapsedEnemyTime;
+        std::chrono::milliseconds elapsedEnemyTime;
+        std::chrono::time_point<std::chrono::high_resolution_clock> currentTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateEnemycurrentTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateEnemyLastUpdateTime;
         std::chrono::seconds elapsedStarTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateStarcurrentTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateStarLastUpdateTime;
-        std::chrono::seconds elapsedBulletTime;
-        std::chrono::time_point<std::chrono::high_resolution_clock> generateBulletcurrentTime;
-        std::chrono::time_point<std::chrono::high_resolution_clock> generateBulletLastUpdateTime;
         std::chrono::seconds elapsedButtonTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateButtonCurrentTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateButtonLastUpdateTime;
