@@ -15,7 +15,7 @@ namespace tema
         float radius;
 
     public:
-        std::chrono::seconds elapsedTime;
+        std::chrono::milliseconds elapsedTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> currentTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> lastUpdateTime;
         bool renderBullet;
@@ -32,11 +32,5 @@ namespace tema
         float getSize();
         void setRadius(float radius);
         float getRadius();
-        //void setElapsedTime(std::chrono::seconds time);
-        /*std::chrono::seconds getElapsedTime();
-        void setCurrentTime(std::chrono::time_point<std::chrono::high_resolution_clock> time);
-        std::chrono::time_point<std::chrono::high_resolution_clock> getCurrentTime();
-        void setLastUpdateTime(std::chrono::time_point<std::chrono::high_resolution_clock> time);
-        std::chrono::time_point<std::chrono::high_resolution_clock> getLastUpdateTime();*/
     };
 }

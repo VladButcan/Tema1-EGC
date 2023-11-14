@@ -2,7 +2,10 @@
 
 using namespace tema;
 
-Bullet::Bullet(int newId, std::string newColor, float x, float y, float newSize, float newAngle) : id(newId), color(newColor), posX(x), posY(y), size(newSize), angle(newAngle) {
+Bullet::Bullet(int newId, std::string newColor, float x, float y, float newSize, float newAngle)
+       : id(newId), color(newColor), posX(x), posY(y), size(newSize), angle(newAngle) {
+    damage = 1.0f;;
+    speed = 50.0f;
     radius = 4.0f;
 }
 

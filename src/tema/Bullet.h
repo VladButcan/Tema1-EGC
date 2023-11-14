@@ -14,6 +14,9 @@ namespace tema
         float size;
         float angle;
         float radius;
+    public:
+        float damage;
+        float speed;
 
     public:
         Bullet(int id, std::string color, float x, float y, float size, float angle);

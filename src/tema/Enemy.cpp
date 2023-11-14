@@ -2,21 +2,22 @@
 
 using namespace tema;
 
-Enemy::Enemy(int newId, std::string newColor, float x, float y, float newSize, glm::mat3 newModelMatrix): id(newId), color(newColor), posX(x), posY(y), size(newSize), modelMatrix(newModelMatrix) {
+Enemy::Enemy(int newId, std::string newColor, float x, float y, float newSize): id(newId), color(newColor), posX(x), posY(y), size(newSize) {
     if (color == "orange") {
-        healt = 3;
+        healt = 2.0f;
     } else {
         if (color == "blue") {
-            healt = 4;
+            healt = 3.0f;
         } else {
             if (color == "yellow") {
-                healt = 5;
+                healt = 4.0f;
             } else {
-                    healt = 6;
+                    healt = 5.0f;
             }
         }
     }
     radius = 5.0f;
+    speed = 1;
 }
 
 std::string Enemy::getColor()
@@ -32,7 +33,7 @@ void Enemy::setHealt(int newHealt) {
     healt = newHealt;
 }
 
-int Enemy::getHealt() {
+float Enemy::getHealt() {
     return healt; 
 }
 
@@ -52,18 +53,6 @@ float Enemy::getPosY() {
     return posY;
 }
 
-void Enemy::translateMatrix(float x, float y) {
-    modelMatrix *= transform2D::Translate(x, y);
-}
-
-void Enemy::scaleMatrix(float x, float y) {
-    modelMatrix *= transform2D::Scale(x, y);
-}
-
-glm::mat3 Enemy::getMatrix() {
-    return modelMatrix;
-}
-
 void Enemy::setSize(float newSize) {
     size = newSize;
 }
@@ -78,4 +67,12 @@ void Enemy::setRadius(float newRadius) {
 
 float Enemy::getRadius() {
     return radius;
+}
+
+void Enemy::setSpeed(float newSPeed) {
+    speed = newSPeed;
+}
+
+float Enemy::getSpeed() {
+    return speed;
 }

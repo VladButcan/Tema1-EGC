@@ -10,6 +10,7 @@
 #include <chrono>
 
 
+
 namespace tema
 {
     class Lab3 : public gfxc::SimpleScene
@@ -47,20 +48,33 @@ namespace tema
         void FrameStart() override;
         void Update(float deltaTimeSeconds) override;
         void FrameEnd() override;
-
+        // On Input Update Functions
         void OnInputUpdate(float deltaTime, int mods) override;
+        //On Key press Functions
         void OnKeyPress(int key, int mods) override;
+        void SkipLevel();
+        //On Key Release Functions
         void OnKeyRelease(int key, int mods) override;
+        // On Mouse Move Functions
         void OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY) override;
-        // On mouse button press functions
+        // On Mouse Button Rress Functions
         void OnMouseBtnPress(int mouseX, int mouseY, int button, int mods) override;
-        // On mouse button release functions
+        void IndentifyMousePositionInWeaponBoxOnMouseButtonPress(int mouseX, int mouseY);
+        void IndentifyMousePositionInBonusBoxOnMouseButtonPress(int mouseX, int mouseY);
+        void IdentifyMousePositionInArenaBoxesOnMouseButtonPress(int mouseX, int mouseY, float &objectX, float &objectY);
+        void SelectBonus(int mouseX, int mouseY);
+        void DeleteWeapon(float objectPositionX, float objectPositionY);
+        void SaveUpMoney(int mouseX, int mouseY);
+        // On Mouse Button Release Functions
         void OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods) override;
         void SpendMoney();
-        // On mouse scrole functions
+        // On Mouse Scrole Functions
         void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
         void OnWindowResize(int width, int height) override;
+        void ShowLevel();
+
         void GetTime();
+        void InitLevelNumbers();
         void InitSquares();
         void InitWeapons();
         void InitStars();
@@ -68,12 +82,14 @@ namespace tema
         void RenderArenaSquares();
         void RenderHealt();
         void RenderAvaibleWeapons();
-        void RenderPriceStars(int translateX, int translateY);
+        void RenderBonuses();
+        //void RenderPriceStars(int translateX, int translateY);
         void RenderAvaibleMoney();
         void RenderWeapon(float deltaTimeSecond);
         void RenderEnemy(float deltaTimeSecond);
         void AddEnemyInGame();
         void RenderBullet(float deltaTimeSecond, float angle);
+        void SetBulletDamageAndSpeed(Bullet &bullet);
         void CheckWeaponEnemyColision(std::vector<Enemy>::iterator enemy);
         bool CheckBulletEnemyColision(std::vector<Enemy>::iterator enemy);
         void RenderMoneyStars(float deltaTimeSecond);
@@ -90,9 +106,8 @@ namespace tema
         float length;
         ViewportSpace viewSpace;
         LogicSpace logicSpace;
-        glm::mat3 modelMatrix, visMatrix;
+        glm::mat3 modelMatrix, visMatrix, matrixForRender;
         glm::ivec2 resolution;
-        int resolutionX, resolutionY;
         int mousePositionX, mousePositionY;
 
 
@@ -101,7 +116,6 @@ namespace tema
         float scaleX, scaleY;
         float angularStep;
         int playerHealt;
-        int level;
         // Square
         float squareSide;
         
@@ -118,17 +132,57 @@ namespace tema
         std::string weaponCollorArray[5];
         std::string starCollorArray[5];
         std::string hexagonCollorArray[5];
+        std::string numbersArray[10];
         std::random_device rd;
-        
-        float dropTimer;
+
+        // Buttons
+        float S_On;
+        float K_On;
+        float I_On;
+        float P_On;
+
         // Game
+        int gameMoney;
         int id;
+        float yResolution;
+        float selectBonus;
+        float newArenaSquares;
+
+
+        //Money Stars
+        float moneyStarsY;
         bool generateStarsBool;
+        float rainbowIndex;
+
+        // Bullet
+        //damage
+        float orangeBulletDamage;
+        float blueBulletDamage;
+        float yellowBulletDamage;
+        float purpleBulletDamage;
+        //speed
+        float orangeBulletSpeed;
+        float blueBulletSpeed;
+        float yellowBulletSpeed;
+        float purpleBulletSpeed;
+        int firingSpeed;
+
+        // Level
+        int level;
+        bool newLevel;
+        std::string levelNumber;
+
+        // Enemy
+        int enemyPerLevel;
+        int enemyCounter;
+        int enemyFrequenceInSec;
+        float enemySpeed;
+
+        // Weapon
         bool generateBulletBool;
         float weaponScale;
-        float moneyStarsY;
-        int gameMoney;
         std::string drawWeaponbyColor;
+
         // Arrays to stack data about objects
         std::vector<Enemy> enemyArray;
         std::vector<Weapon> weaponArray;
@@ -151,6 +205,9 @@ namespace tema
         std::chrono::seconds elapsedBulletTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateBulletcurrentTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateBulletLastUpdateTime;
+        std::chrono::seconds elapsedButtonTime;
+        std::chrono::time_point<std::chrono::high_resolution_clock> generateButtonCurrentTime;
+        std::chrono::time_point<std::chrono::high_resolution_clock> generateButtonLastUpdateTime;
 
         // TODO(student): If you need any other class variables, define them here.
     };

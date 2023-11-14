@@ -4,6 +4,7 @@
 using namespace tema;
 
 Weapon::Weapon(int newId, std::string newColor, float x, float y, float newSize, float newRadius) : id(newId), color(newColor), posX(x), posY(y), size(newSize), radius(newRadius) {
+    renderBullet = true;
 }
 
 std::string Weapon::getColor()
@@ -45,10 +46,3 @@ void Weapon::setRadius(float newRadius) {
 float Weapon::getRadius() {
     return radius;
 }
-
-//void setElapsedTime(std::chrono::seconds time);
-//std::chrono::seconds getElapsedTime();
-//void setCurrentTime(std::chrono::time_point<std::chrono::high_resolution_clock> time);
-//std::chrono::time_point<std::chrono::high_resolution_clock> getCurrentTime();
-//void setLastUpdateTime(std::chrono::time_point<std::chrono::high_resolution_clock> time);
-//std::chrono::time_point<std::chrono::high_resolution_clock> getLastUpdateTime();

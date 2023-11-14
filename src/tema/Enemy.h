@@ -9,19 +9,18 @@ namespace tema
     private:
         int id;
         std::string color;
-        int healt;
+        float healt;
         float posX;
         float posY;
         float size;
         float radius;
-        glm::mat3 modelMatrix;
-
+        float speed;
     public:
-        Enemy(int id, std::string color, float x, float y, float size, glm::mat3 modelMatrix);
+        Enemy(int id, std::string color, float x, float y, float size);
         int getId();
         std::string getColor();
         void setHealt(int healt);
-        int getHealt();
+        float getHealt();
         void setPosX(float x);
         float getPosX();
         void setPosY(float y);
@@ -30,10 +29,7 @@ namespace tema
         float getSize();
         void setRadius(float radius);
         float getRadius();
-        glm::mat3 getMatrix();
-        void translateMatrix(float x, float y);
-        void scaleMatrix(float x, float y);
-        //void setId(int id);
-        //void setColor(std::string color);
+        void setSpeed(float speed);
+        float getSpeed();
     };
 }
