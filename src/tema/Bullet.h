@@ -7,7 +7,6 @@ namespace tema
     class Bullet
     {
     private:
-        int id;
         std::string color;
         float posX;
         float posY;
@@ -15,12 +14,11 @@ namespace tema
         float angle;
         float radius;
     public:
-        float damage;
-        float speed;
+        int damage;
+        int speed;
 
     public:
-        Bullet(int id, std::string color, float x, float y, float size, float angle);
-        int getId();
+        Bullet(std::string color, float x, float y, float size, float angle);
         std::string getColor();
         void setPosX(float x);
         float getPosX();

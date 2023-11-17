@@ -7,22 +7,18 @@ namespace tema
     {
     public:
         std::string color;
-        std::string rightCircle;
-        float centerLeftCircle;
-        float centerRightCircle;
-        float radius;
+        float posX;
+        float posY;
+        float size;
 
     public:
-        Heart(std::string color, float centerLeftCircle, float centerRightCircle, float radius);
-        /*int getId();
+        Heart(std::string color, float posX, float posY, float size);
         std::string getColor();
         void setPosX(float x);
-        void setPosY(float y);
         float getPosX();
+        void setPosY(float y);
         float getPosY();
         void setSize(float size);
-        float getSize();*/
-        //void setId(int id);
-        //void setColor(std::string color);
+        float getSize();
     };
 }

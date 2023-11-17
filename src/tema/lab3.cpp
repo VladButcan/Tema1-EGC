@@ -58,36 +58,33 @@ void Lab3::Init()
     scaleY = 0;
     clock = 0.0;
 
-    angle = 0.0;
-    position = 75;
-    id = 0;
-    
-    angularStep = 0;
-    
     // Init level mnumbers meshes
     InitLevelNumbers();
-    
+
     // Init figures
+    //InitPlayerHealt();
     InitSquares();
     InitWeapons();
     InitStars();
     InitHexagons();
 
     //Game
+    playerHealt = 4;
+    gameMoney = 10;
+    arenaSquares = 3;
     level = 1;
     newLevel = false;
-    playerHealt = 4;
-    gameMoney = 4;
     selectBonus = false;
     newArenaSquares = false;
-    arenaSquares = 3;
+    
 
     // Enemy
     generateEnemyLastUpdateTime = std::chrono::high_resolution_clock::now();
-    enemyPerLevel = 10 + level * 4;
+    enemyPerLevel = level * 10;
+    enemyHealt = 30;
     enemyCounter = 0;
-    enemyFrequenceInMiliSec = 7000;
-    enemySpeed = 80.0f;
+    enemyFrequenceInMiliSec = 4000;
+    enemySpeed = 50;
     addEnemy = false;
 
     // Weapon
@@ -97,9 +94,10 @@ void Lab3::Init()
 
     // Bullet
     generateBulletBool = true;
-    orangeBulletDamage = blueBulletDamage = yellowBulletDamage = purpleBulletDamage = 1.0f;
+    orangeBulletDamage = blueBulletDamage = yellowBulletDamage = purpleBulletDamage = 10;
     orangeBulletSpeed = blueBulletSpeed = yellowBulletSpeed = purpleBulletSpeed = 100;
-    firingSpeed = 2000;
+    firingSpeed = 3000;
+    firingFreq = 50;
 
     // Money Stars
     generateStarLastUpdateTime = generateEnemyLastUpdateTime;
@@ -110,12 +108,13 @@ void Lab3::Init()
     mousePositionX = mousePositionY = 0;
 
     // Scena
-
-    AddMeshToList(object2D::CreateStar("rainbowStar", corner, squareSide, glm::vec3(1, 1, 1), true));
+    AddMeshToList(object2D::CreateStar("rainbowStar", glm::vec3(1, 1, 1), true));
     AddMeshToList(object2D::CreateTextDMG("dmg", glm::vec3(1, 1, 1)));
     AddMeshToList(object2D::CreateTextSPEED("speed", glm::vec3(1, 1, 1)));
-    AddMeshToList(object2D::CreateHeart("heart", glm::vec3(1, 0, 0), true));
+    AddMeshToList(object2D::CreateHeart("redHeart", glm::vec3(0.749, 0.067, 0.067), true));
     AddMeshToList(object2D::CreateCircle("whiteCircle", 0.0f, 0.0f, 4.0f, glm::vec3(1, 1, 1), true));
+
+    
 }
 
 // 2D visualization matrix
@@ -184,33 +183,57 @@ void Lab3::FrameStart()
 
 void Lab3::Update(float deltaTimeSeconds)
 {
-    //cout << mousePositionX << endl << mousePositionY << endl;
-    //cout << enemySpeed << endl;
     resolution = window->GetResolution();
     viewSpace = ViewportSpace(0, 0, resolution.x, resolution.y);
     SetViewportArea(viewSpace, glm::vec3(0), true);
     visMatrix = glm::mat3(1);
     visMatrix *= VisualizationTransf2D(logicSpace, viewSpace);
-    yResolution = resolution.y;
 
-    if (newLevel == true && enemyArray.size() == 0) {
-        //cout << mousePositionX << endl << mousePositionY << endl;
+    if (newLevel == true && enemyArray.size() == 0 && enemiesToEliminate.size() == 0) {
         //enemyCounter = 0;
         //newLevel = false;
+
+        int DMG = level * 75 / 5;
         
         modelMatrix = matrixForRender;
         modelMatrix *= transform2D::Translate(resolution.x / 4, resolution.y / 2);
         modelMatrix *= transform2D::Scale(20, 20);
         RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
-        modelMatrix = matrixForRender;
-        modelMatrix *= transform2D::Translate(3 * resolution.x / 4, resolution.y / 2);
-        modelMatrix *= transform2D::Scale(20, 20);
+        modelMatrix *= transform2D::Scale(0.2, 0.2);
+        modelMatrix *= transform2D::Translate(20, 10);
+        while (DMG != 0) {
+            RenderMesh2D(meshes[numbersArray[DMG % 10]], shaders["VertexColor"], modelMatrix);
+            modelMatrix *= transform2D::Translate(-20, 0);
+            DMG /= 10;
+        }
+        modelMatrix *= transform2D::Scale(1, 0.3);
+        RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
+        modelMatrix *= transform2D::Scale(0.3, 3);
         RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
 
         modelMatrix = matrixForRender;
         modelMatrix *= transform2D::Translate(resolution.x / 4, resolution.y / 2 - 60);
         modelMatrix *= transform2D::Scale(3, 3);
         RenderMesh2D(meshes["dmg"], shaders["VertexColor"], modelMatrix);
+        
+        
+        modelMatrix = matrixForRender;
+        modelMatrix *= transform2D::Translate(3 * resolution.x / 4, resolution.y / 2);
+        modelMatrix *= transform2D::Scale(20, 20);
+        RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
+
+        int SPEED = 50;
+        modelMatrix *= transform2D::Scale(0.2, 0.2);
+        modelMatrix *= transform2D::Translate(20, 10);
+        while (SPEED != 0) {
+            RenderMesh2D(meshes[numbersArray[SPEED % 10]], shaders["VertexColor"], modelMatrix);
+            modelMatrix *= transform2D::Translate(-20, 0);
+            SPEED /= 10;
+        }
+        modelMatrix *= transform2D::Scale(1, 0.3);
+        RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
+        modelMatrix *= transform2D::Scale(0.3, 3);
+        RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
 
         modelMatrix = matrixForRender;
         modelMatrix *= transform2D::Translate(3 * resolution.x / 4, resolution.y / 2 - 60);
@@ -219,7 +242,6 @@ void Lab3::Update(float deltaTimeSeconds)
 
     }
     else {
-        cout << blueBulletDamage << " " << blueBulletSpeed << endl;
         ShowLevel();
         // Drop money
         
@@ -229,7 +251,7 @@ void Lab3::Update(float deltaTimeSeconds)
         RenderAvaibleWeapons();
         RenderBonuses();
         RenderAvaibleMoney();
-
+        RenderCharacteristics();
         GetTime();
 
         if (playerHealt <= 0) {
@@ -303,7 +325,8 @@ void Lab3::SkipLevel()
     newLevel = true;
     enemyArray.clear();
     bulletArray.clear();
-    enemySpeed += std::round(enemyPerLevel / 5) * 5;
+    enemySpeed += std::round((enemyPerLevel - enemyCounter) / 5) * 5;
+    enemyHealt += enemyPerLevel / 5 * 10;
 }
 /*
 ------------------------------------------------------------------------------------------
@@ -340,7 +363,7 @@ void Lab3::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods)
 {
     if (button == 1) {
         if (newLevel == true) {
-            SelectBonus(mouseX, mouseY);
+            SelectBonusAndPassLevel(mouseX, mouseY);
         }
         SaveUpMoney(mouseX, mouseY);
         IndentifyMousePositionInWeaponBoxOnMouseButtonPress(mouseX, mouseY);
@@ -378,10 +401,10 @@ void Lab3::IndentifyMousePositionInWeaponBoxOnMouseButtonPress(int mouseX, int m
 void Lab3::IndentifyMousePositionInBonusBoxOnMouseButtonPress(int mouseX, int mouseY) {
     if (mouseX >= 25 && mouseX <= 125 && mouseY <= 250 && mouseY >= 150) {
         if (gameMoney >= 20) {
-            orangeBulletDamage += 0.25;
-            blueBulletDamage += 0.25;
-            yellowBulletDamage += 0.25;
-            purpleBulletDamage += 0.25;
+            orangeBulletDamage += 10;
+            blueBulletDamage += 10;
+            yellowBulletDamage += 10;
+            purpleBulletDamage += 10;
             gameMoney -= 20;
         }
     }
@@ -389,25 +412,28 @@ void Lab3::IndentifyMousePositionInBonusBoxOnMouseButtonPress(int mouseX, int mo
         if (mouseX >= 175 && mouseX <= 275 && mouseY <= 250 && mouseY >= 150) {
             if (gameMoney >= 20) {
                 firingSpeed -= 50;
+                firingFreq += 50;
                 gameMoney -= 20;
             }
         }
         else {
             if (mouseX >= 325 && mouseX <= 425 && mouseY <= 250 && mouseY >= 150) {
                 if (gameMoney >= 20) {
-                    orangeBulletSpeed += 25;
-                    blueBulletSpeed += 25;
-                    yellowBulletSpeed += 25;
-                    purpleBulletSpeed += 25;
+                    orangeBulletSpeed += 10;
+                    blueBulletSpeed += 10;
+                    yellowBulletSpeed += 10;
+                    purpleBulletSpeed += 10;
                     gameMoney -= 20;
                 }
             }
             else {
                 if (mouseX >= 475 && mouseX <= 575 && mouseY <= 250 && mouseY >= 150) {
-                    if (gameMoney >= 300) {
-                        newArenaSquares = true;
-                        arenaSquares++;
-                        gameMoney -= 300;
+                    if (newArenaSquares == false) {
+                        if (gameMoney >= 300) {
+                            newArenaSquares = true;
+                            arenaSquares++;
+                            gameMoney -= 300;
+                        }
                     }
                 }
             }
@@ -459,46 +485,44 @@ void Lab3::IdentifyMousePositionInArenaBoxesOnMouseButtonPress(int mouseX, int m
     }
 }
 
-void Lab3::SelectBonus(int mouseX, int mouseY)
+void Lab3::SelectBonusAndPassLevel(int mouseX, int mouseY)
 {
     if (mouseX >= resolution.x / 4 - 200
         && mouseX <= resolution.x / 4 + 200
         && mouseY >= resolution.y / 2 - 200
         && mouseY <= resolution.y / 2 + 200) {
-        orangeBulletDamage *= 1.2;
-        blueBulletDamage *= 1.2;
-        yellowBulletDamage *= 1.2;
-        purpleBulletDamage *= 1.2;
+        orangeBulletDamage += level * 100 / 5;
+        blueBulletDamage += level * 75 / 5;
+        yellowBulletDamage += level * 100 / 5;
+        purpleBulletDamage += level * 100 / 5;
         newLevel = false;
         level += 1;
         if (level % 2 == 0) {
-            enemyFrequenceInMiliSec -= 1000;
+            enemyFrequenceInMiliSec -= 500;
         }
-        enemyPerLevel = 2 + level * 4;
+        enemyPerLevel += 10;
         enemyCounter = 0;
         bulletArray.clear();
-        
     }
     else {
         if (mouseX >= 3 * resolution.x / 4 - 200
             && mouseX <= 3 * resolution.x / 4 + 200
             && mouseY >= resolution.y / 2 - 200
             && mouseY <= resolution.y / 2 + 200) {
-            orangeBulletSpeed *= 1.2;
-            blueBulletSpeed *= 1.2;
-            yellowBulletSpeed *= 1.2;
-            purpleBulletSpeed *= 1.2;
+            orangeBulletSpeed += 25;
+            blueBulletSpeed += 25;
+            yellowBulletSpeed += 25;
+            purpleBulletSpeed += 25;
             newLevel = false;
             level += 1;
             if (level % 2 == 0) {
-                enemyFrequenceInMiliSec -= 200;
+                enemyFrequenceInMiliSec -= 500;
             }
-            enemyPerLevel = 2 + level * 4;
+            enemyPerLevel += 10;
             enemyCounter = 0;
             bulletArray.clear();
         }
     }
-    
 }
 
 void Lab3::DeleteWeapon(float objectPositionX, float objectPositionY)
@@ -598,12 +622,11 @@ void Lab3::OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods)
                 }
             }
             if (freePosition == true && drawWeaponbyColor != "") {
-                Weapon weapon(id, drawWeaponbyColor, generateObjectX, generateObjectY, weaponScale, 5 * weaponScale);
+                Weapon weapon(drawWeaponbyColor, generateObjectX, generateObjectY, weaponScale, 5 * weaponScale);
                 weapon.lastUpdateTime = std::chrono::high_resolution_clock::now();
                 weapon.renderBullet = true;
                 weaponArray.push_back(weapon);
                 SpendMoney();
-                //cout << drawWeaponbyColor << endl;
             }
         }
         drawWeaponbyColor = "";
@@ -736,6 +759,16 @@ void Lab3::InitLevelNumbers()
     AddMeshToList(object2D::CreateNine("nine", glm::vec3(1, 1, 1)));
 }
 
+void Lab3::InitPlayerHealt()
+{
+    //modelMatrix *= transform2D::Translate(squareSide / 2, squareSide / 2);
+    //modelMatrix *= transform2D::Translate(resolution.x - 500 + (i * 2 * 60), resolution.y - 100);
+    /*for (int i = 0; i < playerHealt; i++) {
+        Heart heart("redHeart", resolution.x - 500 + (i * 2 * 60), resolution.y - 100.0f, 5.0f);
+        heartArray.push_back(heart);
+    }*/
+}
+
 void Lab3::InitSquares()
 {
     // Define squares
@@ -746,17 +779,17 @@ void Lab3::InitSquares()
     squareCollorArray[4] = "redSquare";
     squareCollorArray[5] = "greenSquare";
 
-    AddMeshToList(object2D::CreateSquare("redSquare", glm::vec3(1, 0, 0), true));
+    AddMeshToList(object2D::CreateSquare("redSquare", glm::vec3(0.749, 0.067, 0.067), true));
 
-    AddMeshToList(object2D::CreateSquare("greenSquare", glm::vec3(0, 1, 0), true));
+    AddMeshToList(object2D::CreateSquare("greenSquare", glm::vec3(0.208, 0.361, 0.071), true));
 
-    AddMeshToList(object2D::CreateSquare("blueSquare", glm::vec3(0, 0, 1), true));
+    AddMeshToList(object2D::CreateSquare("blueSquare", glm::vec3(0.439, 0.733, 0.839), true));
 
     AddMeshToList(object2D::CreateSquare("orangeSquare", glm::vec3(1, 0.5, 0), true));
 
-    AddMeshToList(object2D::CreateSquare("yellowSquare", glm::vec3(1, 1, 0), true));
+    AddMeshToList(object2D::CreateSquare("yellowSquare", glm::vec3(0.929, 0.898, 0.643), true));
 
-    AddMeshToList(object2D::CreateSquare("purpleSquare", glm::vec3(0.5, 0, 0.5), true));
+    AddMeshToList(object2D::CreateSquare("purpleSquare", glm::vec3(0.62, 0.408, 0.961), true));
 
     AddMeshToList(object2D::CreateSquare("whiteSquare", glm::vec3(1, 1, 1)));
 }
@@ -770,17 +803,17 @@ void Lab3::InitWeapons()
     weaponCollorArray[3] = "purpleWeapon";
     weaponCollorArray[4] = "redWeapon";
 
-    AddMeshToList(object2D::CreateWeapon("redWeapon", corner, squareSide, glm::vec3(1, 0, 0), true));
+    AddMeshToList(object2D::CreateWeapon("redWeapon", glm::vec3(0.749, 0.067, 0.067), true));
 
-    AddMeshToList(object2D::CreateWeapon("blueWeapon", corner, squareSide, glm::vec3(0, 0, 1), true));
+    AddMeshToList(object2D::CreateWeapon("blueWeapon", glm::vec3(0.439, 0.733, 0.839), true));
 
-    AddMeshToList(object2D::CreateWeapon("orangeWeapon", corner, squareSide, glm::vec3(1, 0.5, 0), true));
+    AddMeshToList(object2D::CreateWeapon("orangeWeapon", glm::vec3(0.961, 0.635, 0.086), true));
 
-    AddMeshToList(object2D::CreateWeapon("yellowWeapon", corner, squareSide, glm::vec3(1, 1, 0), true));
+    AddMeshToList(object2D::CreateWeapon("yellowWeapon", glm::vec3(0.969, 0.914, 0.416), true));
 
-    AddMeshToList(object2D::CreateWeapon("purpleWeapon", corner, squareSide, glm::vec3(0.5, 0, 0.5), true));
+    AddMeshToList(object2D::CreateWeapon("purpleWeapon", glm::vec3(0.62, 0.408, 0.961), true));
 
-    AddMeshToList(object2D::CreateWeapon("whiteWeapon", corner, squareSide, glm::vec3(1, 1, 1), true));
+    AddMeshToList(object2D::CreateWeapon("whiteWeapon", glm::vec3(1, 1, 1), true));
 }
 
 void Lab3::InitStars()
@@ -792,17 +825,17 @@ void Lab3::InitStars()
     starCollorArray[3] = "purpleStar";
     starCollorArray[4] = "redStar";
 
-    AddMeshToList(object2D::CreateStar("redStar", corner, squareSide, glm::vec3(1, 0, 0), true));
+    AddMeshToList(object2D::CreateStar("redStar", glm::vec3(0.749, 0.067, 0.067), true));
 
-    AddMeshToList(object2D::CreateStar("blueStar", corner, squareSide, glm::vec3(0, 0, 1), true));
+    AddMeshToList(object2D::CreateStar("blueStar", glm::vec3(0.439, 0.733, 0.839), true));
 
-    AddMeshToList(object2D::CreateStar("orangeStar", corner, squareSide, glm::vec3(1, 0.5, 0), true));
+    AddMeshToList(object2D::CreateStar("orangeStar", glm::vec3(0.961, 0.635, 0.086), true));
 
-    AddMeshToList(object2D::CreateStar("yellowStar", corner, squareSide, glm::vec3(1, 1, 0), true));
+    AddMeshToList(object2D::CreateStar("yellowStar", glm::vec3(0.969, 0.914, 0.416), true));
 
-    AddMeshToList(object2D::CreateStar("purpleStar", corner, squareSide, glm::vec3(0.5, 0, 0.5), true));
+    AddMeshToList(object2D::CreateStar("purpleStar", glm::vec3(0.62, 0.408, 0.961), true));
 
-    AddMeshToList(object2D::CreateStar("whiteStar", corner, squareSide, glm::vec3(1, 1, 1), true));
+    AddMeshToList(object2D::CreateStar("whiteStar", glm::vec3(1, 1, 1), true));
 }
 
 void Lab3::InitHexagons()
@@ -813,17 +846,29 @@ void Lab3::InitHexagons()
     hexagonCollorArray[2] = "yellowHexagon";
     hexagonCollorArray[3] = "purpleHexagon";
 
-    AddMeshToList(object2D::CreateHexagon("redHexagon", corner, squareSide, glm::vec3(1, 0, 0), true));
+    AddMeshToList(object2D::CreateHexagon("redHexagon", glm::vec3(0.749, 0.067, 0.067), true));
 
-    AddMeshToList(object2D::CreateHexagon("blueHexagon", corner, squareSide, glm::vec3(0, 0, 1), true));
+    AddMeshToList(object2D::CreateHexagon("blueHexagon", glm::vec3(0.439, 0.733, 0.839), true));
 
-    AddMeshToList(object2D::CreateHexagon("orangeHexagon", corner, squareSide, glm::vec3(1, 0.5, 0), true));
+    // Blue inside color is green
+    AddMeshToList(object2D::CreateHexagon("blueInsideColor", glm::vec3(0.886, 0.973, 1), true));
 
-    AddMeshToList(object2D::CreateHexagon("yellowHexagon", corner, squareSide, glm::vec3(1, 1, 0), true));
+    AddMeshToList(object2D::CreateHexagon("orangeHexagon", glm::vec3(0.961, 0.635, 0.086), true));
 
-    AddMeshToList(object2D::CreateHexagon("purpleHexagon", corner, squareSide, glm::vec3(0.5, 0, 0.5), true));
+    // Orange inside color is yellow
+    AddMeshToList(object2D::CreateHexagon("orangeInsideColor", glm::vec3(0.988, 0.89, 0.561), true));
+    
+    AddMeshToList(object2D::CreateHexagon("yellowHexagon", glm::vec3(0.969, 0.914, 0.416), true));
 
-    AddMeshToList(object2D::CreateHexagon("whiteHexagon", corner, squareSide, glm::vec3(1, 1, 1), true));
+    // Yellow inside color is green
+    AddMeshToList(object2D::CreateHexagon("yellowInsideColor", glm::vec3(0.996, 1, 0.89), true));
+
+    AddMeshToList(object2D::CreateHexagon("purpleHexagon", glm::vec3(0.62, 0.408, 0.961), true));
+
+    // Purple inside color is cream
+    AddMeshToList(object2D::CreateHexagon("purpleInsideColor", glm::vec3(1, 0.96, 0.76), true));
+
+    AddMeshToList(object2D::CreateHexagon("whiteHexagon", glm::vec3(1, 1, 1), true));
 }
 
 
@@ -851,10 +896,9 @@ void Lab3::RenderHealt()
 {
     for (int i = 0; i < playerHealt; i++) {
         modelMatrix = matrixForRender;
-        modelMatrix *= transform2D::Translate(squareSide / 2, squareSide / 2);
-        modelMatrix *= transform2D::Translate(resolution.x - 500 + (i * 2 * 60), resolution.y - 100);
+        modelMatrix *= transform2D::Translate(resolution.x - 60 - (i * 2 * 60), resolution.y - 50);
         modelMatrix *= transform2D::Scale(5, 5);
-        RenderMesh2D(meshes["heart"], shaders["VertexColor"], modelMatrix);
+        RenderMesh2D(meshes["redHeart"], shaders["VertexColor"], modelMatrix);
     }
 }
 
@@ -883,56 +927,81 @@ void Lab3::RenderAvaibleWeapons()
         modelMatrix *= transform2D::Translate(30, 0);
         modelMatrix *= transform2D::Scale(1.5, 1.5);
         RenderMesh2D(meshes["whiteStar"], shaders["VertexColor"], modelMatrix);
-
-        //for (int j = 0; j < (i + 1) % 5; j++) {
-        //    //RenderPriceStars(translateX + j * 30, translateY);
-        //    modelMatrix = visMatrix;
-        //    modelMatrix *= transform2D::Translate(translateX + j * 30, translateY - 25);
-        //    //modelMatrix *= transform2D::Scale(1, 1);
-        //    RenderMesh2D(meshes[numbersArray[j + 1]], shaders["VertexColor"], modelMatrix);
-        //    modelMatrix *= transform2D::Translate(translateX + j * 30 + 10, translateY - 25);
-        //    modelMatrix *= transform2D::Scale(1.5, 1.5);
-        //    RenderMesh2D(meshes["whiteStar"], shaders["VertexColor"], modelMatrix);
-        //}
     }
 }
-
-//void Lab3::RenderPriceStars(int translateX, int translateY)
-//{
-//        modelMatrix = visMatrix;
-//        modelMatrix *= transform2D::Translate(translateX + 9, translateY - 25);
-//        modelMatrix *= transform2D::Scale(1.5, 1.5);
-//        RenderMesh2D(meshes["whiteStar"], shaders["VertexColor"], modelMatrix);
-//}
 
 
 void Lab3::RenderAvaibleMoney()
 {
-    int end = 0;
-    if (gameMoney < 10) {
-        end = 1;
-    }
-    else {
-        if (gameMoney < 100) {
-            end = 2;
-        }
-        else {
-            if (gameMoney < 1000) {
-                end = 3;
-            }
-        }
-    }
     int copy = gameMoney;
-    for (int i = 0; i < end; i++) {
-        modelMatrix = matrixForRender;
-        modelMatrix *= transform2D::Translate(resolution.x - 380 - i * 30, resolution.y - 145);
+    modelMatrix = matrixForRender;
+    modelMatrix *= transform2D::Translate(resolution.x - 60, resolution.y - 145);
+    while (copy != 0) {
         RenderMesh2D(meshes[numbersArray[copy % 10]], shaders["VertexColor"], modelMatrix);
+        modelMatrix *= transform2D::Translate(-25, 0);
         copy /= 10;
     }
+
     modelMatrix = matrixForRender;
-    modelMatrix *= transform2D::Translate(resolution.x - 380 + 30, resolution.y - 145);
+    modelMatrix *= transform2D::Translate(resolution.x - 30, resolution.y - 145);
     modelMatrix *= transform2D::Scale(1.5, 1.5);
     RenderMesh2D(meshes["whiteStar"], shaders["VertexColor"], modelMatrix);
+}
+
+void Lab3::RenderCharacteristics()
+{
+    int copy = blueBulletDamage;
+    modelMatrix = matrixForRender;
+    modelMatrix *= transform2D::Translate(resolution.x - 60, resolution.y - 180);
+    while (copy != 0) {
+        RenderMesh2D(meshes[numbersArray[copy % 10]], shaders["VertexColor"], modelMatrix);
+        modelMatrix *= transform2D::Translate(-25, 0);
+        copy /= 10;
+    }
+    modelMatrix *= transform2D::Translate(-25, 0);
+    RenderMesh2D(meshes["dmg"], shaders["VertexColor"], modelMatrix);
+
+    //----------------------------------------------------------------------------------------
+    copy = blueBulletSpeed;
+    modelMatrix = matrixForRender;
+    modelMatrix *= transform2D::Translate(resolution.x - 60, resolution.y - 220);
+    while (copy != 0) {
+        RenderMesh2D(meshes[numbersArray[copy % 10]], shaders["VertexColor"], modelMatrix);
+        modelMatrix *= transform2D::Translate(-25, 0);
+        copy /= 10;
+    }
+    modelMatrix *= transform2D::Translate(-25, 0);
+    RenderMesh2D(meshes["speed"], shaders["VertexColor"], modelMatrix);
+    modelMatrix *= transform2D::Translate(-50, 0);
+    RenderMesh2D(meshes["whiteStar"], shaders["VertexColor"], modelMatrix);
+
+    //----------------------------------------------------------------------------------------
+    copy = firingFreq;
+    modelMatrix = matrixForRender;
+    modelMatrix *= transform2D::Translate(resolution.x - 60, resolution.y - 260);
+    while (copy != 0) {
+        RenderMesh2D(meshes[numbersArray[copy % 10]], shaders["VertexColor"], modelMatrix);
+        modelMatrix *= transform2D::Translate(-25, 0);
+        copy /= 10;
+    }
+    modelMatrix *= transform2D::Translate(-25, 0);
+    RenderMesh2D(meshes["speed"], shaders["VertexColor"], modelMatrix);
+    modelMatrix *= transform2D::Translate(-50, 0);
+    RenderMesh2D(meshes["whiteWeapon"], shaders["VertexColor"], modelMatrix);
+
+    //----------------------------------------------------------------------------------------
+    copy = enemySpeed;
+    modelMatrix = matrixForRender;
+    modelMatrix *= transform2D::Translate(resolution.x - 60, resolution.y - 300);
+    while (copy != 0) {
+        RenderMesh2D(meshes[numbersArray[copy % 10]], shaders["VertexColor"], modelMatrix);
+        modelMatrix *= transform2D::Translate(-25, 0);
+        copy /= 10;
+    }
+    modelMatrix *= transform2D::Translate(-25, 0);
+    RenderMesh2D(meshes["speed"], shaders["VertexColor"], modelMatrix);
+    modelMatrix *= transform2D::Translate(-50, 0);
+    RenderMesh2D(meshes["whiteHexagon"], shaders["VertexColor"], modelMatrix);
 }
 
 
@@ -978,13 +1047,15 @@ void Lab3::RenderEnemy(float deltaTime)
         addEnemy = false;
         if (enemyCounter % 5 == 0) {
             enemySpeed += 5;
+            enemyHealt += 5;
         }
         AddEnemyInGame();
     }
 
     for (auto enemy = enemyArray.begin(); enemy != enemyArray.end();) {
-        
         if (enemy->getPosX() <= 75.0f) {
+            Heart heart("redHeart", resolution.x - 60 - ((playerHealt - 1) * 2 * 60), resolution.y - 50, 5.0f);
+            heartsToEliminate.push_back(heart);
             playerHealt -= 1;
             enemiesToEliminate.push_back(*enemy);
             enemy = enemyArray.erase(enemy);
@@ -996,6 +1067,16 @@ void Lab3::RenderEnemy(float deltaTime)
 
             enemy->setPosX(enemy->getPosX() - enemySpeed * deltaTime);
             RenderMesh2D(meshes[enemy->getColor() + "Hexagon"], shaders["VertexColor"], modelMatrix);
+            modelMatrix *= transform2D::Scale(0.7, 0.7);
+            RenderMesh2D(meshes[enemy->getColor() + "InsideColor"], shaders["VertexColor"], modelMatrix);
+            modelMatrix *= transform2D::Translate(2.5, -20);
+            modelMatrix *= transform2D::Scale(0.4, 0.4);
+            int copy = enemy->getHealt();
+            while (copy != 0) {
+                RenderMesh2D(meshes[numbersArray[copy % 10]], shaders["VertexColor"], modelMatrix);
+                modelMatrix *= transform2D::Translate(-20, 0);
+                copy /= 10;
+            }
             ++enemy;
         }
     }
@@ -1005,18 +1086,17 @@ void Lab3::RenderEnemy(float deltaTime)
 void Lab3::AddEnemyInGame() {
     std::mt19937 generator(rd());
     std::uniform_int_distribution<int> distribution1(0, 1000);
-    randomObject = distribution1(generator) % 4;
+    int randomObject = distribution1(generator) % 4;
     std::uniform_int_distribution<int> distribution2(0, 1000);
-    randomPosition = distribution2(generator) % 3;
+    int randomPosition = distribution2(generator) % 3;
 
     std::string color = hexagonCollorArray[randomObject];
     size_t pos = color.find("Hexagon");
     color.erase(pos, 7);
-    Enemy enemy(id, color, resolution.x, 75.0f + (randomPosition % 3 * 140), 3.0f);
+    Enemy enemy(color, resolution.x, 75.0f + (randomPosition % 3 * 140), 3.0f);
     enemy.setRadius(enemy.getRadius() * 3.0f);
     enemy.setSpeed(enemySpeed);
-    enemy.setHealt(enemy.getHealt() + level * 2);
-    id++;
+    enemy.setHealt(enemy.getHealt() + enemyHealt);
     enemyArray.push_back(enemy);
 }
 
@@ -1037,6 +1117,8 @@ void Lab3::RenderBullet(float deltaTimeSecond)
             modelMatrix *= transform2D::Translate(bullet->getPosX(), bullet->getPosY());
             modelMatrix *= transform2D::Scale(bullet->getSize(), bullet->getSize());
             modelMatrix *= transform2D::Rotate(-bullet->getAngle());
+            RenderMesh2D(meshes[bullet->getColor() + "Star"], shaders["VertexColor"], modelMatrix);
+            modelMatrix *= transform2D::Rotate(-0.65);
             RenderMesh2D(meshes[bullet->getColor() + "Star"], shaders["VertexColor"], modelMatrix);
             bullet->setPosX(bullet->getPosX() + bullet->speed * deltaTimeSecond);
             bullet->setAngle(bullet->getAngle() + 3 * deltaTimeSecond);
@@ -1060,7 +1142,7 @@ void Lab3::GenerateBullet() {
             }
         }
         if (genBullet == true) {
-            Bullet bullet(id, weapon->getColor(), weapon->getPosX() + 20.0f, weapon->getPosY(), 3.0f, 0.0f);
+            Bullet bullet(weapon->getColor(), weapon->getPosX() + 20.0f, weapon->getPosY(), 2.0f, 2.0f);
             bullet.setRadius(bullet.getRadius() * 3.0f);
             SetBulletDamageAndSpeed(bullet);
             bulletArray.push_back(bullet);
@@ -1149,7 +1231,7 @@ void Lab3::RenderMoneyStars(float deltaTimeSecond)
     float red = 0.5f + 0.5f * sin(rainbowIndex);
     float green = 0.5f + 0.5f * sin(rainbowIndex + 2.0f);
     float blue = 0.5f + 0.5f * sin(rainbowIndex + 4.0f);
-    AddMeshToList(object2D::CreateStar("rainbowStar", corner, squareSide, glm::vec3(red, green, blue), true));
+    AddMeshToList(object2D::CreateStar("rainbowStar", glm::vec3(red, green, blue), true));
 
     std::mt19937 generator(rd());
     std::uniform_int_distribution<int> distribution1(600, resolution.x);
@@ -1193,6 +1275,8 @@ void Lab3::EliminationByShrinking(float deltaTime)
             modelMatrix *= transform2D::Scale(size, size);
             enemy->setSize(size);
             RenderMesh2D(meshes[enemy->getColor() + "Hexagon"], shaders["VertexColor"], modelMatrix);
+            modelMatrix *= transform2D::Scale(0.6, 0.6);
+            RenderMesh2D(meshes[enemy->getColor() + "InsideColor"], shaders["VertexColor"], modelMatrix);
             ++enemy;
         }
     }
@@ -1239,9 +1323,28 @@ void Lab3::EliminationByShrinking(float deltaTime)
             modelMatrix = matrixForRender;
             modelMatrix *= transform2D::Translate(bullet->getPosX(), bullet->getPosY());
             modelMatrix *= transform2D::Scale(size, size);
-            bullet->setSize(size);
+            modelMatrix *= transform2D::Rotate(-bullet->getAngle());
             RenderMesh2D(meshes[bullet->getColor() + "Star"], shaders["VertexColor"], modelMatrix);
+            modelMatrix *= transform2D::Rotate(-0.65);
+            RenderMesh2D(meshes[bullet->getColor() + "Star"], shaders["VertexColor"], modelMatrix);
+            bullet->setSize(size);
             ++bullet;
+        }
+    }
+
+    for (auto heart = heartsToEliminate.begin(); heart != heartsToEliminate.end();) {
+        float size = heart->getSize();
+        size -= 5 * deltaTime;
+        if (size <= 0.02) {
+            heart = heartsToEliminate.erase(heart);
+        }
+        else {
+            modelMatrix = matrixForRender;
+            modelMatrix *= transform2D::Translate(heart->getPosX(), heart->getPosY());
+            modelMatrix *= transform2D::Scale(size, size);
+            heart->setSize(size);
+            RenderMesh2D(meshes[heart->getColor()], shaders["VertexColor"], modelMatrix);
+            ++heart;
         }
     }
 }
@@ -1267,27 +1370,21 @@ void Lab3::RenderBonuses()
     // Render Plus
     modelMatrix = matrixForRender;
     modelMatrix *= transform2D::Translate(squareSide / 2, squareSide / 2);
-    modelMatrix *= transform2D::Translate(translateX, translateY);
-    modelMatrix *= transform2D::Translate(-30, 0);
+    modelMatrix *= transform2D::Translate(translateX, translateY + 10);
+    modelMatrix *= transform2D::Translate(-25, 0);
     modelMatrix *= transform2D::Scale(0.2, 1);
     RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
     modelMatrix *= transform2D::Scale(5, 0.2);
     RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
-    // Render 0
+    // Render 1
     modelMatrix *= transform2D::Translate(20, 0);
     modelMatrix *= transform2D::Scale(1, 5);
-    RenderMesh2D(meshes[numbersArray[0]], shaders["VertexColor"], modelMatrix);
-    //Render dot
-    modelMatrix *= transform2D::Translate(15, -10);
-    RenderMesh2D(meshes["whiteCircle"], shaders["VertexColor"], modelMatrix);
-    //Render 2
-    modelMatrix *= transform2D::Translate(15, 10);
-    RenderMesh2D(meshes[numbersArray[2]], shaders["VertexColor"], modelMatrix);
-    //Render 5
+    RenderMesh2D(meshes[numbersArray[1]], shaders["VertexColor"], modelMatrix);
+    //Render 0
     modelMatrix *= transform2D::Translate(20, 0);
-    RenderMesh2D(meshes[numbersArray[5]], shaders["VertexColor"], modelMatrix);
+    RenderMesh2D(meshes[numbersArray[0]], shaders["VertexColor"], modelMatrix);
     //Render DMG text
-    modelMatrix *= transform2D::Translate(-30, -30);
+    modelMatrix *= transform2D::Translate(-15, -40);
     modelMatrix *= transform2D::Scale(0.8, 0.8);
     RenderMesh2D(meshes["dmg"], shaders["VertexColor"], modelMatrix);
     // ---------------------------------------------------------------------- Render Bonus
@@ -1321,27 +1418,21 @@ void Lab3::RenderBonuses()
     // Render Plus
     modelMatrix = matrixForRender;
     modelMatrix *= transform2D::Translate(squareSide / 2, squareSide / 2);
-    modelMatrix *= transform2D::Translate(translateX, translateY);
-    modelMatrix *= transform2D::Translate(-35, 0);
+    modelMatrix *= transform2D::Translate(translateX, translateY + 10);
+    modelMatrix *= transform2D::Translate(-25, 0);
     modelMatrix *= transform2D::Scale(0.2, 1);
     RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
     modelMatrix *= transform2D::Scale(5, 0.2);
     RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
-    // Render 0
-    modelMatrix *= transform2D::Translate(20, 0);
+    // Render 5
+    modelMatrix *= transform2D::Translate(25, 0);
     modelMatrix *= transform2D::Scale(1, 5);
-    RenderMesh2D(meshes[numbersArray[0]], shaders["VertexColor"], modelMatrix);
-    //Render dot
-    modelMatrix *= transform2D::Translate(15, -10);
-    RenderMesh2D(meshes["whiteCircle"], shaders["VertexColor"], modelMatrix);
+    RenderMesh2D(meshes[numbersArray[5]], shaders["VertexColor"], modelMatrix);
     //Render 0
-    modelMatrix *= transform2D::Translate(15, 10);
-    RenderMesh2D(meshes[numbersArray[0]], shaders["VertexColor"], modelMatrix);
-    //Render 2
     modelMatrix *= transform2D::Translate(20, 0);
-    RenderMesh2D(meshes[numbersArray[2]], shaders["VertexColor"], modelMatrix);
-    //Render DMG text
-    modelMatrix *= transform2D::Translate(-75, -30);
+    RenderMesh2D(meshes[numbersArray[0]], shaders["VertexColor"], modelMatrix);
+    //Render SPEED text
+    modelMatrix *= transform2D::Translate(-55, -40);
     modelMatrix *= transform2D::Scale(1.2, 1.2);
     RenderMesh2D(meshes["whiteWeapon"], shaders["VertexColor"], modelMatrix);
     modelMatrix *= transform2D::Translate(40, 0);
@@ -1378,24 +1469,21 @@ void Lab3::RenderBonuses()
     // Render Plus
     modelMatrix = matrixForRender;
     modelMatrix *= transform2D::Translate(squareSide / 2, squareSide / 2);
-    modelMatrix *= transform2D::Translate(translateX, translateY);
-    modelMatrix *= transform2D::Translate(-30, 0);
+    modelMatrix *= transform2D::Translate(translateX, translateY + 10);
+    modelMatrix *= transform2D::Translate(-20, 0);
     modelMatrix *= transform2D::Scale(0.2, 1);
     RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
     modelMatrix *= transform2D::Scale(5, 0.2);
     RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
-    // Render 0
-    modelMatrix *= transform2D::Translate(30, 0);
+    // Render 1
+    modelMatrix *= transform2D::Translate(20, 0);
     modelMatrix *= transform2D::Scale(1, 5);
+    RenderMesh2D(meshes[numbersArray[1]], shaders["VertexColor"], modelMatrix);
+    //Render 0
+    modelMatrix *= transform2D::Translate(20, 0);
     RenderMesh2D(meshes[numbersArray[0]], shaders["VertexColor"], modelMatrix);
-    //Render dot
-    modelMatrix *= transform2D::Translate(15, -10);
-    RenderMesh2D(meshes["whiteCircle"], shaders["VertexColor"], modelMatrix);
-    //Render 5
-    modelMatrix *= transform2D::Translate(15, 10);
-    RenderMesh2D(meshes[numbersArray[5]], shaders["VertexColor"], modelMatrix);
-    //Render DMG text
-    modelMatrix *= transform2D::Translate(-60, -30);
+    //Render SPEED text
+    modelMatrix *= transform2D::Translate(-50, -40);
     //modelMatrix *= transform2D::Scale(0.8, 0.8);
     RenderMesh2D(meshes["whiteStar"], shaders["VertexColor"], modelMatrix);
     modelMatrix *= transform2D::Translate(40, 0);
@@ -1458,6 +1546,5 @@ void Lab3::RenderBonuses()
         RenderMesh2D(meshes["whiteStar"], shaders["VertexColor"], modelMatrix);
         // ------------------------------------------------------------------ Render Price
     }
-
     // ===================================================================================
 }

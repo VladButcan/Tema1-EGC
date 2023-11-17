@@ -7,17 +7,15 @@ namespace tema
     class Enemy
     {
     private:
-        int id;
         std::string color;
-        float healt;
+        int healt;
+        int speed;
         float posX;
         float posY;
         float size;
         float radius;
-        float speed;
     public:
-        Enemy(int id, std::string color, float x, float y, float size);
-        int getId();
+        Enemy(std::string color, float x, float y, float size);
         std::string getColor();
         void setHealt(int healt);
         float getHealt();
@@ -29,7 +27,7 @@ namespace tema
         float getSize();
         void setRadius(float radius);
         float getRadius();
-        void setSpeed(float speed);
+        void setSpeed(int speed);
         float getSpeed();
     };
 }

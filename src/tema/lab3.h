@@ -62,7 +62,7 @@ namespace tema
         void IndentifyMousePositionInWeaponBoxOnMouseButtonPress(int mouseX, int mouseY);
         void IndentifyMousePositionInBonusBoxOnMouseButtonPress(int mouseX, int mouseY);
         void IdentifyMousePositionInArenaBoxesOnMouseButtonPress(int mouseX, int mouseY, float &objectX, float &objectY);
-        void SelectBonus(int mouseX, int mouseY);
+        void SelectBonusAndPassLevel(int mouseX, int mouseY);
         void DeleteWeapon(float objectPositionX, float objectPositionY);
         void SaveUpMoney(int mouseX, int mouseY);
         // On Mouse Button Release Functions
@@ -74,6 +74,7 @@ namespace tema
         void ShowLevel();
 
         void GetTime();
+        void InitPlayerHealt();
         void InitLevelNumbers();
         void InitSquares();
         void InitWeapons();
@@ -85,6 +86,7 @@ namespace tema
         void RenderBonuses();
         //void RenderPriceStars(int translateX, int translateY);
         void RenderAvaibleMoney();
+        void RenderCharacteristics();
         void RenderWeapon(float deltaTimeSecond);
         void RenderEnemy(float deltaTimeSecond);
         void AddEnemyInGame();
@@ -103,6 +105,7 @@ namespace tema
         glm::mat3 VisualizationTransf2DUnif(const LogicSpace& logicSpace, const ViewportSpace& viewSpace);
 
         void SetViewportArea(const ViewportSpace& viewSpace, glm::vec3 colorColor = glm::vec3(0), bool clear = true);
+
      protected:
         //window
         float length;
@@ -110,32 +113,25 @@ namespace tema
         LogicSpace logicSpace;
         glm::mat3 modelMatrix, visMatrix, matrixForRender;
         glm::ivec2 resolution;
-        int mousePositionX, mousePositionY;
+        glm::vec3 corner;
+        std::random_device rd;
 
+        
 
         float cx, cy;
         float translateX, translateY;
         float scaleX, scaleY;
-        float angularStep;
-        int playerHealt;
+        float clock;
+
         // Square
         float squareSide;
         
-
-        int randomObject;
-        int randomPosition;
-        float clock;
-        bool addEnemy;
-        float position;
-        float angle;
-        
-        glm::vec3 corner;
+        // Arrays for meshes
         std::string squareCollorArray[6];
         std::string weaponCollorArray[5];
         std::string starCollorArray[5];
         std::string hexagonCollorArray[5];
         std::string numbersArray[10];
-        std::random_device rd;
 
         // Buttons
         float S_On;
@@ -144,13 +140,12 @@ namespace tema
         float P_On;
 
         // Game
+        int playerHealt;
         int gameMoney;
-        int id;
-        float yResolution;
         float selectBonus;
         float newArenaSquares;
         int arenaSquares;
-
+        int mousePositionX, mousePositionY;
 
         //Money Stars
         bool generateStarsBool;
@@ -158,16 +153,17 @@ namespace tema
 
         // Bullet
         //damage
-        float orangeBulletDamage;
-        float blueBulletDamage;
-        float yellowBulletDamage;
-        float purpleBulletDamage;
+        int orangeBulletDamage;
+        int blueBulletDamage;
+        int yellowBulletDamage;
+        int purpleBulletDamage;
         //speed
-        float orangeBulletSpeed;
-        float blueBulletSpeed;
-        float yellowBulletSpeed;
-        float purpleBulletSpeed;
+        int orangeBulletSpeed;
+        int blueBulletSpeed;
+        int yellowBulletSpeed;
+        int purpleBulletSpeed;
         int firingSpeed;
+        int firingFreq;
 
         // Level
         int level;
@@ -177,7 +173,9 @@ namespace tema
         int enemyPerLevel;
         int enemyCounter;
         int enemyFrequenceInMiliSec;
-        float enemySpeed;
+        int enemySpeed;
+        int enemyHealt;
+        bool addEnemy;
 
         // Weapon
         bool generateBulletBool;
@@ -185,17 +183,20 @@ namespace tema
         std::string drawWeaponbyColor;
 
         // Arrays to stack data about objects
+        std::vector<Heart> heartArray;
         std::vector<Enemy> enemyArray;
         std::vector<Weapon> weaponArray;
         std::vector<Bullet> bulletArray;
         std::vector<MoneyStars> moneyStarsArray;
+
+
         // Arrays to stack data about objects being in an eliminating process
+        std::vector<Heart> heartsToEliminate;
         std::vector<Enemy> enemiesToEliminate;
         std::vector<Weapon> weaponsToEliminate;
         std::vector<MoneyStars> moneyStarsToEliminate;
         std::vector<Bullet> bulletToEliminate;
-        std::vector<Bullet> indicesToEliminateBullets;
-        std::vector<Enemy> indicesToEliminateEnemies;
+
         // Time evidence
         std::chrono::milliseconds elapsedEnemyTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> currentTime;
@@ -208,6 +209,5 @@ namespace tema
         std::chrono::time_point<std::chrono::high_resolution_clock> generateButtonCurrentTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateButtonLastUpdateTime;
 
-        // TODO(student): If you need any other class variables, define them here.
     };
-}   // namespace m1
+}

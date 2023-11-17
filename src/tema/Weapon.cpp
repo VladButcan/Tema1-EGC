@@ -3,17 +3,14 @@
 
 using namespace tema;
 
-Weapon::Weapon(int newId, std::string newColor, float x, float y, float newSize, float newRadius) : id(newId), color(newColor), posX(x), posY(y), size(newSize), radius(newRadius) {
+Weapon::Weapon(std::string newColor, float x, float y, float newSize, float newRadius)
+       : color(newColor), posX(x), posY(y), size(newSize), radius(newRadius) {
     renderBullet = true;
 }
 
 std::string Weapon::getColor()
 {
     return color;
-}
-
-int Weapon::getId() {
-    return id;
 }
 
 float Weapon::getPosX() {

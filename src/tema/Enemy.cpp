@@ -2,17 +2,18 @@
 
 using namespace tema;
 
-Enemy::Enemy(int newId, std::string newColor, float x, float y, float newSize): id(newId), color(newColor), posX(x), posY(y), size(newSize) {
+Enemy::Enemy(std::string newColor, float x, float y, float newSize)
+      : color(newColor), posX(x), posY(y), size(newSize) {
     if (color == "orange") {
-        healt = 1.0f;
+        healt = 10;
     } else {
         if (color == "blue") {
-            healt = 2.0f;
+            healt = 20;
         } else {
             if (color == "yellow") {
-                healt = 3.0f;
+                healt = 30;
             } else {
-                    healt = 4.0f;
+                    healt = 40;
             }
         }
     }
@@ -25,16 +26,12 @@ std::string Enemy::getColor()
     return color;
 }
 
-int Enemy::getId() {
-    return id; 
-}
-
 void Enemy::setHealt(int newHealt) {
     healt = newHealt;
 }
 
 float Enemy::getHealt() {
-    return healt; 
+    return healt;
 }
 
 void Enemy::setPosX(float x) {
@@ -69,7 +66,7 @@ float Enemy::getRadius() {
     return radius;
 }
 
-void Enemy::setSpeed(float newSPeed) {
+void Enemy::setSpeed(int newSPeed) {
     speed = newSPeed;
 }
 

@@ -2,20 +2,16 @@
 
 using namespace tema;
 
-Bullet::Bullet(int newId, std::string newColor, float x, float y, float newSize, float newAngle)
-       : id(newId), color(newColor), posX(x), posY(y), size(newSize), angle(newAngle) {
-    damage = 1.0f;;
-    speed = 50.0f;
+Bullet::Bullet(std::string newColor, float x, float y, float newSize, float newAngle)
+       : color(newColor), posX(x), posY(y), size(newSize), angle(newAngle) {
+    damage = 10;
+    speed = 50;
     radius = 4.0f;
 }
 
 std::string Bullet::getColor()
 {
     return color;
-}
-
-int Bullet::getId() {
-    return id;
 }
 
 void Bullet::setPosX(float x) {
