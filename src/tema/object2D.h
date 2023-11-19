@@ -9,6 +9,7 @@
 namespace object2D
 {
     Mesh* CreateSquare(const std::string &name, glm::vec3 color, bool fill = false);
+    Mesh* CreateTriangle(const std::string& name, glm::vec3 color, bool fill = false);
     Mesh* CreateHexagon(const std::string& name, glm::vec3 color, bool fill = false);
     Mesh* CreateWeapon(const std::string& name, glm::vec3 color, bool fill = false);
     Mesh* CreateStar(const std::string& name, glm::vec3 color, bool fill = false);

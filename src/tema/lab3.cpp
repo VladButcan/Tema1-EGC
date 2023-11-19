@@ -74,9 +74,9 @@ void Lab3::Init()
     arenaSquares = 3;
     level = 1;
     newLevel = false;
-    selectBonus = false;
     newArenaSquares = false;
-    
+    gamePause = false;
+    elapsedPauseTime = std::chrono::milliseconds(0);
 
     // Enemy
     generateEnemyLastUpdateTime = std::chrono::high_resolution_clock::now();
@@ -90,7 +90,6 @@ void Lab3::Init()
     // Weapon
     drawWeaponbyColor = "";
     weaponScale = 4.0f;
-
 
     // Bullet
     generateBulletBool = true;
@@ -113,8 +112,132 @@ void Lab3::Init()
     AddMeshToList(object2D::CreateTextSPEED("speed", glm::vec3(1, 1, 1)));
     AddMeshToList(object2D::CreateHeart("redHeart", glm::vec3(0.749, 0.067, 0.067), true));
     AddMeshToList(object2D::CreateCircle("whiteCircle", 0.0f, 0.0f, 4.0f, glm::vec3(1, 1, 1), true));
+    AddMeshToList(object2D::CreateTriangle("whiteTriangle", glm::vec3(1, 1, 1), true));
 
     
+}
+
+void Lab3::InitLevelNumbers()
+{
+    numbersArray[0] = "zero";
+    numbersArray[1] = "one";
+    numbersArray[2] = "two";
+    numbersArray[3] = "three";
+    numbersArray[4] = "four";
+    numbersArray[5] = "five";
+    numbersArray[6] = "six";
+    numbersArray[7] = "seven";
+    numbersArray[8] = "eight";
+    numbersArray[9] = "nine";
+    AddMeshToList(object2D::CreateZero("zero", glm::vec3(1, 1, 1)));
+    AddMeshToList(object2D::CreateOne("one", glm::vec3(1, 1, 1)));
+    AddMeshToList(object2D::CreateTwo("two", glm::vec3(1, 1, 1)));
+    AddMeshToList(object2D::CreateThree("three", glm::vec3(1, 1, 1)));
+    AddMeshToList(object2D::CreateFour("four", glm::vec3(1, 1, 1)));
+    AddMeshToList(object2D::CreateFive("five", glm::vec3(1, 1, 1)));
+    AddMeshToList(object2D::CreateSix("six", glm::vec3(1, 1, 1)));
+    AddMeshToList(object2D::CreateSeven("seven", glm::vec3(1, 1, 1)));
+    AddMeshToList(object2D::CreateEight("eight", glm::vec3(1, 1, 1)));
+    AddMeshToList(object2D::CreateNine("nine", glm::vec3(1, 1, 1)));
+}
+
+void Lab3::InitSquares()
+{
+    // Define squares
+    squareCollorArray[0] = "orangeSquare";
+    squareCollorArray[1] = "blueSquare";
+    squareCollorArray[2] = "yellowSquare";
+    squareCollorArray[3] = "purpleSquare";
+    squareCollorArray[4] = "redSquare";
+    squareCollorArray[5] = "greenSquare";
+
+    AddMeshToList(object2D::CreateSquare("redSquare", glm::vec3(0.749, 0.067, 0.067), true));
+
+    AddMeshToList(object2D::CreateSquare("greenSquare", glm::vec3(0.208, 0.361, 0.071), true));
+
+    AddMeshToList(object2D::CreateSquare("blueSquare", glm::vec3(0.439, 0.733, 0.839), true));
+
+    AddMeshToList(object2D::CreateSquare("orangeSquare", glm::vec3(1, 0.5, 0), true));
+
+    AddMeshToList(object2D::CreateSquare("yellowSquare", glm::vec3(0.929, 0.898, 0.643), true));
+
+    AddMeshToList(object2D::CreateSquare("purpleSquare", glm::vec3(0.62, 0.408, 0.961), true));
+
+    AddMeshToList(object2D::CreateSquare("whiteSquare", glm::vec3(1, 1, 1)));
+    AddMeshToList(object2D::CreateSquare("whiteFillSquare", glm::vec3(1, 1, 1), true));
+}
+
+void Lab3::InitWeapons()
+{
+    // Define weapons
+    weaponCollorArray[0] = "orangeWeapon";
+    weaponCollorArray[1] = "blueWeapon";
+    weaponCollorArray[2] = "yellowWeapon";
+    weaponCollorArray[3] = "purpleWeapon";
+    weaponCollorArray[4] = "redWeapon";
+
+    AddMeshToList(object2D::CreateWeapon("redWeapon", glm::vec3(0.749, 0.067, 0.067), true));
+
+    AddMeshToList(object2D::CreateWeapon("blueWeapon", glm::vec3(0.439, 0.733, 0.839), true));
+
+    AddMeshToList(object2D::CreateWeapon("orangeWeapon", glm::vec3(0.961, 0.635, 0.086), true));
+
+    AddMeshToList(object2D::CreateWeapon("yellowWeapon", glm::vec3(0.969, 0.914, 0.416), true));
+
+    AddMeshToList(object2D::CreateWeapon("purpleWeapon", glm::vec3(0.62, 0.408, 0.961), true));
+
+    AddMeshToList(object2D::CreateWeapon("whiteWeapon", glm::vec3(1, 1, 1), true));
+}
+
+void Lab3::InitStars()
+{
+    // Define stars
+    starCollorArray[0] = "orangeStar";
+    starCollorArray[1] = "blueStar";
+    starCollorArray[2] = "yellowStar";
+    starCollorArray[3] = "purpleStar";
+    starCollorArray[4] = "redStar";
+
+    AddMeshToList(object2D::CreateStar("redStar", glm::vec3(0.749, 0.067, 0.067), true));
+
+    AddMeshToList(object2D::CreateStar("blueStar", glm::vec3(0.439, 0.733, 0.839), true));
+
+    AddMeshToList(object2D::CreateStar("orangeStar", glm::vec3(0.961, 0.635, 0.086), true));
+
+    AddMeshToList(object2D::CreateStar("yellowStar", glm::vec3(0.969, 0.914, 0.416), true));
+
+    AddMeshToList(object2D::CreateStar("purpleStar", glm::vec3(0.62, 0.408, 0.961), true));
+
+    AddMeshToList(object2D::CreateStar("whiteStar", glm::vec3(1, 1, 1), true));
+}
+
+void Lab3::InitHexagons()
+{
+    // Define stars
+    hexagonCollorArray[0] = "orangeHexagon";
+    hexagonCollorArray[1] = "blueHexagon";
+    hexagonCollorArray[2] = "yellowHexagon";
+    hexagonCollorArray[3] = "purpleHexagon";
+
+    AddMeshToList(object2D::CreateHexagon("redHexagon", glm::vec3(0.749, 0.067, 0.067), true));
+
+    AddMeshToList(object2D::CreateHexagon("blueHexagon", glm::vec3(0.439, 0.733, 0.839), true));
+    // Blue inside color is green
+    AddMeshToList(object2D::CreateHexagon("blueInsideColor", glm::vec3(0.886, 0.973, 1), true));
+
+    AddMeshToList(object2D::CreateHexagon("orangeHexagon", glm::vec3(0.961, 0.635, 0.086), true));
+    // Orange inside color is yellow
+    AddMeshToList(object2D::CreateHexagon("orangeInsideColor", glm::vec3(0.988, 0.89, 0.561), true));
+
+    AddMeshToList(object2D::CreateHexagon("yellowHexagon", glm::vec3(0.969, 0.914, 0.416), true));
+    // Yellow inside color is green
+    AddMeshToList(object2D::CreateHexagon("yellowInsideColor", glm::vec3(0.996, 1, 0.89), true));
+
+    AddMeshToList(object2D::CreateHexagon("purpleHexagon", glm::vec3(0.62, 0.408, 0.961), true));
+    // Purple inside color is cream
+    AddMeshToList(object2D::CreateHexagon("purpleInsideColor", glm::vec3(1, 0.96, 0.76), true));
+
+    AddMeshToList(object2D::CreateHexagon("whiteHexagon", glm::vec3(1, 1, 1), true));
 }
 
 // 2D visualization matrix
@@ -171,110 +294,103 @@ void Lab3::SetViewportArea(const ViewportSpace& viewSpace, glm::vec3 colorColor,
 
 void Lab3::FrameStart()
 {
-    // Clears the color buffer (using the previously set color) and depth buffer
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //glm::ivec2 resolution = window->GetResolution();
-    //// Sets the screen area where to draw
-    //glViewport(0, 0, resolution.x, resolution.y);
 }
 
 
 void Lab3::Update(float deltaTimeSeconds)
+{
+    ReinitVisualMatrix();
+    if (newLevel == true && enemyArray.size() == 0 && enemiesToEliminate.size() == 0) {
+        RenderBonusScene(deltaTimeSeconds);
+    }
+    else {
+        RenderGameScene(deltaTimeSeconds);
+    }
+}
+
+void Lab3::ReinitVisualMatrix()
 {
     resolution = window->GetResolution();
     viewSpace = ViewportSpace(0, 0, resolution.x, resolution.y);
     SetViewportArea(viewSpace, glm::vec3(0), true);
     visMatrix = glm::mat3(1);
     visMatrix *= VisualizationTransf2D(logicSpace, viewSpace);
+}
 
-    if (newLevel == true && enemyArray.size() == 0 && enemiesToEliminate.size() == 0) {
-        //enemyCounter = 0;
-        //newLevel = false;
+void Lab3::RenderGameScene(float deltaTimeSeconds)
+{
+    // Change color
+    ColorTheStar(deltaTimeSeconds);
+    ShowLevel();
+    GameSettings();
+    RenderArenaSquares();
+    RenderHealt();
+    RenderAvaibleWeapons();
+    RenderBonuses();
+    RenderAvaibleMoney();
+    RenderCharacteristics();
+    GetTime();
+    ValidateGameData(deltaTimeSeconds);
+    EliminationByShrinking(deltaTimeSeconds);
+    RenderWeapon(deltaTimeSeconds);
+    RenderEnemy(deltaTimeSeconds);
+    RenderBullet(deltaTimeSeconds);
+    DragAndDropMechanism();
+    RenderMoneyStars(deltaTimeSeconds);
+}
 
-        int DMG = level * 75 / 5;
-        
-        modelMatrix = matrixForRender;
-        modelMatrix *= transform2D::Translate(resolution.x / 4, resolution.y / 2);
-        modelMatrix *= transform2D::Scale(20, 20);
-        RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
-        modelMatrix *= transform2D::Scale(0.2, 0.2);
-        modelMatrix *= transform2D::Translate(20, 10);
-        while (DMG != 0) {
-            RenderMesh2D(meshes[numbersArray[DMG % 10]], shaders["VertexColor"], modelMatrix);
-            modelMatrix *= transform2D::Translate(-20, 0);
-            DMG /= 10;
-        }
-        modelMatrix *= transform2D::Scale(1, 0.3);
-        RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
-        modelMatrix *= transform2D::Scale(0.3, 3);
-        RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
-
-        modelMatrix = matrixForRender;
-        modelMatrix *= transform2D::Translate(resolution.x / 4, resolution.y / 2 - 60);
-        modelMatrix *= transform2D::Scale(3, 3);
-        RenderMesh2D(meshes["dmg"], shaders["VertexColor"], modelMatrix);
-        
-        
-        modelMatrix = matrixForRender;
-        modelMatrix *= transform2D::Translate(3 * resolution.x / 4, resolution.y / 2);
-        modelMatrix *= transform2D::Scale(20, 20);
-        RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
-
-        int SPEED = 50;
-        modelMatrix *= transform2D::Scale(0.2, 0.2);
-        modelMatrix *= transform2D::Translate(20, 10);
-        while (SPEED != 0) {
-            RenderMesh2D(meshes[numbersArray[SPEED % 10]], shaders["VertexColor"], modelMatrix);
-            modelMatrix *= transform2D::Translate(-20, 0);
-            SPEED /= 10;
-        }
-        modelMatrix *= transform2D::Scale(1, 0.3);
-        RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
-        modelMatrix *= transform2D::Scale(0.3, 3);
-        RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
-
-        modelMatrix = matrixForRender;
-        modelMatrix *= transform2D::Translate(3 * resolution.x / 4, resolution.y / 2 - 60);
-        modelMatrix *= transform2D::Scale(3, 3);
-        RenderMesh2D(meshes["speed"], shaders["VertexColor"], modelMatrix);
-
+void Lab3::RenderBonusScene(float deltaTimeSeconds) {
+    int DMG = level * 75 / 5;
+    // Draw Left White Square
+    modelMatrix = matrixForRender;
+    modelMatrix *= transform2D::Translate(resolution.x / 4, resolution.y / 2);
+    modelMatrix *= transform2D::Scale(20, 20);
+    RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
+    modelMatrix *= transform2D::Scale(0.2, 0.2);
+    modelMatrix *= transform2D::Translate(20, 10);
+    // Draw DMG value
+    while (DMG != 0) {
+        RenderMesh2D(meshes[numbersArray[DMG % 10]], shaders["VertexColor"], modelMatrix);
+        modelMatrix *= transform2D::Translate(-20, 0);
+        DMG /= 10;
     }
-    else {
-        ShowLevel();
-        // Drop money
-        
-
-        RenderArenaSquares();
-        RenderHealt();
-        RenderAvaibleWeapons();
-        RenderBonuses();
-        RenderAvaibleMoney();
-        RenderCharacteristics();
-        GetTime();
-
-        if (playerHealt <= 0) {
-            addEnemy = false;
-        }
-        if (newLevel == true) {
-            addEnemy = false;
-        }
-
-        RenderWeapon(deltaTimeSeconds);
-        RenderEnemy(deltaTimeSeconds);
-        RenderBullet(deltaTimeSeconds);
-        EliminationByShrinking(deltaTimeSeconds);
-
-        modelMatrix = matrixForRender;
-
-        modelMatrix *= transform2D::Translate(mousePositionX, resolution.y - mousePositionY);
-        modelMatrix *= transform2D::Scale(weaponScale, weaponScale);
-        RenderMesh2D(meshes[drawWeaponbyColor + "Weapon"], shaders["VertexColor"], modelMatrix);
-
-        RenderMoneyStars(deltaTimeSeconds);
-
+    // Draw "+"
+    modelMatrix *= transform2D::Scale(1, 0.3);
+    RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
+    modelMatrix *= transform2D::Scale(0.3, 3);
+    RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
+    // Draw DMG Text
+    modelMatrix = matrixForRender;
+    modelMatrix *= transform2D::Translate(resolution.x / 4, resolution.y / 2 - 60);
+    modelMatrix *= transform2D::Scale(3, 3);
+    RenderMesh2D(meshes["dmg"], shaders["VertexColor"], modelMatrix);
+    // Draw Right White Square
+    modelMatrix = matrixForRender;
+    modelMatrix *= transform2D::Translate(3 * resolution.x / 4, resolution.y / 2);
+    modelMatrix *= transform2D::Scale(20, 20);
+    RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
+    
+    int SPEED = 50;
+    modelMatrix *= transform2D::Scale(0.2, 0.2);
+    modelMatrix *= transform2D::Translate(20, 10);
+    // Draw Speed Value
+    while (SPEED != 0) {
+        RenderMesh2D(meshes[numbersArray[SPEED % 10]], shaders["VertexColor"], modelMatrix);
+        modelMatrix *= transform2D::Translate(-20, 0);
+        SPEED /= 10;
     }
+    // Draw "+"
+    modelMatrix *= transform2D::Scale(1, 0.3);
+    RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
+    modelMatrix *= transform2D::Scale(0.3, 3);
+    RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
+    // Draw SPEED Text
+    modelMatrix = matrixForRender;
+    modelMatrix *= transform2D::Translate(3 * resolution.x / 4, resolution.y / 2 - 60);
+    modelMatrix *= transform2D::Scale(3, 3);
+    RenderMesh2D(meshes["speed"], shaders["VertexColor"], modelMatrix);
 }
 
 
@@ -335,10 +451,6 @@ On Key Release Functions
 */
 void Lab3::OnKeyRelease(int key, int mods)
 {
-    // Add key release event
-    /*if (key == GLFW_KEY_W) {
-        drawWeaponbyColor = "";
-    }*/
 
 }
 
@@ -349,7 +461,6 @@ On Mouse Move Functions
 */
 void Lab3::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)
 {
-    // Add mouse move event
         mousePositionX = mouseX;
         mousePositionY = mouseY;
 }
@@ -362,18 +473,24 @@ On Mouse Button Press Functions
 void Lab3::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods)
 {
     if (button == 1) {
-        if (newLevel == true) {
+        if (newLevel == true && enemyArray.size() == 0 && enemiesToEliminate.size() == 0) {
             SelectBonusAndPassLevel(mouseX, mouseY);
         }
-        SaveUpMoney(mouseX, mouseY);
-        IndentifyMousePositionInWeaponBoxOnMouseButtonPress(mouseX, mouseY);
-        IndentifyMousePositionInBonusBoxOnMouseButtonPress(mouseX, mouseY);
+        IndentifyMousePositionInPauseBoxMouseButtonPress(mouseX, mouseY);
+        if (gamePause == false) {
+            SaveUpMoney(mouseX, mouseY);
+            IndentifyMousePositionInWeaponBoxOnMouseButtonPress(mouseX, mouseY);
+            IndentifyMousePositionInBonusBoxOnMouseButtonPress(mouseX, mouseY);
+        }
+        
     }
 
     if (button == 2) {
-        float objectPositionX = 0.0f, objectPositionY = 0.0f;
-        IdentifyMousePositionInArenaBoxesOnMouseButtonPress(mouseX, mouseY, objectPositionX, objectPositionY);
-        if (objectPositionX != 0.0f && objectPositionY != 0.0f) DeleteWeapon(objectPositionX, objectPositionY);
+        if (gamePause == false) {
+            float objectPositionX = 0.0f, objectPositionY = 0.0f;
+            IdentifyMousePositionInArenaBoxesOnMouseButtonPress(mouseX, mouseY, objectPositionX, objectPositionY);
+            if (objectPositionX != 0.0f && objectPositionY != 0.0f) DeleteWeapon(objectPositionX, objectPositionY);
+        }
     }
 }
 
@@ -485,19 +602,27 @@ void Lab3::IdentifyMousePositionInArenaBoxesOnMouseButtonPress(int mouseX, int m
     }
 }
 
+void Lab3::IndentifyMousePositionInPauseBoxMouseButtonPress(int mouseX, int mouseY) {
+    if (mouseX >= resolution.x / 2 - 30 && mouseX <= resolution.x / 2 + 30 && mouseY <= 80 && mouseY >= 20) {
+        if (gamePause == true) gamePause = false;
+        else gamePause = true;
+    }
+}
+
 void Lab3::SelectBonusAndPassLevel(int mouseX, int mouseY)
 {
     if (mouseX >= resolution.x / 4 - 200
         && mouseX <= resolution.x / 4 + 200
         && mouseY >= resolution.y / 2 - 200
-        && mouseY <= resolution.y / 2 + 200) {
-        orangeBulletDamage += level * 100 / 5;
+        && mouseY <= resolution.y / 2 + 200
+        ) {
+        orangeBulletDamage += level * 75 / 5;
         blueBulletDamage += level * 75 / 5;
-        yellowBulletDamage += level * 100 / 5;
-        purpleBulletDamage += level * 100 / 5;
+        yellowBulletDamage += level * 75 / 5;
+        purpleBulletDamage += level * 75 / 5;
         newLevel = false;
         level += 1;
-        if (level % 2 == 0) {
+        if (level % 2 == 0 && enemyFrequenceInMiliSec > 500) {
             enemyFrequenceInMiliSec -= 500;
         }
         enemyPerLevel += 10;
@@ -508,14 +633,15 @@ void Lab3::SelectBonusAndPassLevel(int mouseX, int mouseY)
         if (mouseX >= 3 * resolution.x / 4 - 200
             && mouseX <= 3 * resolution.x / 4 + 200
             && mouseY >= resolution.y / 2 - 200
-            && mouseY <= resolution.y / 2 + 200) {
+            && mouseY <= resolution.y / 2 + 200
+            ) {
             orangeBulletSpeed += 25;
             blueBulletSpeed += 25;
             yellowBulletSpeed += 25;
             purpleBulletSpeed += 25;
             newLevel = false;
             level += 1;
-            if (level % 2 == 0) {
+            if (level % 2 == 0 && enemyFrequenceInMiliSec > 500) {
                 enemyFrequenceInMiliSec -= 500;
             }
             enemyPerLevel += 10;
@@ -546,10 +672,10 @@ void Lab3::DeleteWeapon(float objectPositionX, float objectPositionY)
 void Lab3::SaveUpMoney(int mouseX, int mouseY)
 {
     for (auto money = moneyStarsArray.begin(); money != moneyStarsArray.end();) {
-        if (mouseX >= money->getPosX() - 15
-            && mouseX <= money->getPosX() + 15
-            && mouseY <= resolution.y - (money->getPosY() - 15)
-            && mouseY >= resolution.y - (money->getPosY() + 15)) {
+        if (mouseX >= money->getPosX() - 20
+            && mouseX <= money->getPosX() + 20
+            && mouseY <= resolution.y - (money->getPosY() - 20)
+            && mouseY >= resolution.y - (money->getPosY() + 20)) {
             moneyStarsToEliminate.push_back(*money);
             money = moneyStarsArray.erase(money);
             gameMoney++;
@@ -669,10 +795,18 @@ void Lab3::OnWindowResize(int width, int height)
 {
 }
 
+void Lab3::ColorTheStar(float deltaTimeSeconds) {
+    rainbowIndex += deltaTimeSeconds;
+    float red = 0.5f + 0.5f * sin(rainbowIndex);
+    float green = 0.5f + 0.5f * sin(rainbowIndex + 2.0f);
+    float blue = 0.5f + 0.5f * sin(rainbowIndex + 4.0f);
+    AddMeshToList(object2D::CreateStar("rainbowStar", glm::vec3(red, green, blue), true));
+}
+
 void Lab3::ShowLevel()
 {
     modelMatrix = matrixForRender;
-    modelMatrix *= transform2D::Translate(resolution.x - 200, 200);
+    modelMatrix *= transform2D::Translate(resolution.x / 2, 3 * resolution.y / 4);
     modelMatrix *= transform2D::Scale(10, 10);
     int copy = level;
     while (copy != 0) {
@@ -682,14 +816,39 @@ void Lab3::ShowLevel()
     }
 }
 
+void Lab3::GameSettings()
+{
+    modelMatrix = matrixForRender;
+    modelMatrix *= transform2D::Translate(resolution.x / 2, resolution.y - 50);
+    modelMatrix *= transform2D::Scale(3, 3);
+    RenderMesh2D(meshes["whiteSquare"], shaders["VertexColor"], modelMatrix);
+    modelMatrix *= transform2D::Scale(0.5, 0.5);
+    if (gamePause == false) {
+        modelMatrix *= transform2D::Rotate(-3.14 / 2);
+        RenderMesh2D(meshes["whiteTriangle"], shaders["VertexColor"], modelMatrix);
+    }
+    else {
+        modelMatrix *= transform2D::Translate(-8, 0);
+        modelMatrix *= transform2D::Scale(0.4, 1);
+        RenderMesh2D(meshes["whiteFillSquare"], shaders["VertexColor"], modelMatrix);
+        modelMatrix *= transform2D::Translate(40, 0);
+        RenderMesh2D(meshes["whiteFillSquare"], shaders["VertexColor"], modelMatrix);
+    }
+    
+}
+
 void Lab3::GetTime() {
     // Get time moment
     currentTime = std::chrono::high_resolution_clock::now();
-
+    if (gamePause == true) {
+        generateEnemyLastUpdateTime = currentTime;
+        generateButtonLastUpdateTime = currentTime;
+        generateStarLastUpdateTime = currentTime;
+    }
     // Enemy generator
     generateEnemycurrentTime = currentTime;
     elapsedEnemyTime = std::chrono::duration_cast<std::chrono::milliseconds>(generateEnemycurrentTime - generateEnemyLastUpdateTime);
-    if (elapsedEnemyTime >= std::chrono::milliseconds(enemyFrequenceInMiliSec)) {
+    if (elapsedEnemyTime >= std::chrono::milliseconds(enemyFrequenceInMiliSec) && gamePause == false) {
         generateEnemyLastUpdateTime = generateEnemycurrentTime;
         addEnemy = true;
         enemyCounter++;
@@ -700,27 +859,24 @@ void Lab3::GetTime() {
 
     }
 
-
     // Button reset
     generateButtonCurrentTime = currentTime;
-    elapsedButtonTime = std::chrono::duration_cast<std::chrono::seconds>(generateButtonCurrentTime - generateButtonLastUpdateTime);
-    if (elapsedButtonTime >= std::chrono::seconds(2)) {
+    elapsedButtonTime = std::chrono::duration_cast<std::chrono::milliseconds>(generateButtonCurrentTime - generateButtonLastUpdateTime);
+    if (elapsedButtonTime >= std::chrono::milliseconds(4000) && gamePause == false) {
         generateButtonLastUpdateTime = generateButtonCurrentTime;
         S_On = false;
         K_On = false;
         I_On = false;
         P_On = false;
     }
-    
 
     // Money generator
     generateStarcurrentTime = currentTime;
-    elapsedStarTime = std::chrono::duration_cast<std::chrono::seconds>(generateStarcurrentTime - generateStarLastUpdateTime);
-    if (elapsedStarTime >= std::chrono::seconds(3)) {
+    elapsedStarTime = std::chrono::duration_cast<std::chrono::milliseconds>(generateStarcurrentTime - generateStarLastUpdateTime);
+    if (elapsedStarTime >= std::chrono::milliseconds(3000) && gamePause == false) {
         generateStarLastUpdateTime = generateStarcurrentTime;
         generateStarsBool = true;
     }
-
 
     // Weapon shooting timer
     for (auto weapon = weaponArray.begin(); weapon != weaponArray.end();) {
@@ -728,148 +884,25 @@ void Lab3::GetTime() {
         weapon->elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(weapon->currentTime - weapon->lastUpdateTime);
         if (weapon->elapsedTime >= std::chrono::milliseconds(firingSpeed)) {
             weapon->lastUpdateTime = weapon->currentTime;
-            weapon->renderBullet = true;
+            if (gamePause == false) weapon->renderBullet = true;
         }
         ++weapon;
     }
 }
-
-
-void Lab3::InitLevelNumbers()
+void Lab3::ValidateGameData(float &deltaTimeSeconds)
 {
-    numbersArray[0] = "zero";
-    numbersArray[1] = "one";
-    numbersArray[2] = "two";
-    numbersArray[3] = "three";
-    numbersArray[4] = "four";
-    numbersArray[5] = "five";
-    numbersArray[6] = "six";
-    numbersArray[7] = "seven";
-    numbersArray[8] = "eight";
-    numbersArray[9] = "nine";
-    AddMeshToList(object2D::CreateZero("zero", glm::vec3(1, 1, 1)));
-    AddMeshToList(object2D::CreateOne("one", glm::vec3(1, 1, 1)));
-    AddMeshToList(object2D::CreateTwo("two", glm::vec3(1, 1, 1)));
-    AddMeshToList(object2D::CreateThree("three", glm::vec3(1, 1, 1)));
-    AddMeshToList(object2D::CreateFour("four", glm::vec3(1, 1, 1)));
-    AddMeshToList(object2D::CreateFive("five", glm::vec3(1, 1, 1)));
-    AddMeshToList(object2D::CreateSix("six", glm::vec3(1, 1, 1)));
-    AddMeshToList(object2D::CreateSeven("seven", glm::vec3(1, 1, 1)));
-    AddMeshToList(object2D::CreateEight("eight", glm::vec3(1, 1, 1)));
-    AddMeshToList(object2D::CreateNine("nine", glm::vec3(1, 1, 1)));
+    if (gamePause == true) {
+        deltaTimeSeconds = 0;
+    }
+    if (playerHealt <= 0) {
+        enemyArray.clear();
+        weaponArray.clear();
+        moneyStarsArray.clear();
+        bulletArray.clear();
+        Init();
+    }
 }
 
-void Lab3::InitPlayerHealt()
-{
-    //modelMatrix *= transform2D::Translate(squareSide / 2, squareSide / 2);
-    //modelMatrix *= transform2D::Translate(resolution.x - 500 + (i * 2 * 60), resolution.y - 100);
-    /*for (int i = 0; i < playerHealt; i++) {
-        Heart heart("redHeart", resolution.x - 500 + (i * 2 * 60), resolution.y - 100.0f, 5.0f);
-        heartArray.push_back(heart);
-    }*/
-}
-
-void Lab3::InitSquares()
-{
-    // Define squares
-    squareCollorArray[0] = "orangeSquare";
-    squareCollorArray[1] = "blueSquare";
-    squareCollorArray[2] = "yellowSquare";
-    squareCollorArray[3] = "purpleSquare";
-    squareCollorArray[4] = "redSquare";
-    squareCollorArray[5] = "greenSquare";
-
-    AddMeshToList(object2D::CreateSquare("redSquare", glm::vec3(0.749, 0.067, 0.067), true));
-
-    AddMeshToList(object2D::CreateSquare("greenSquare", glm::vec3(0.208, 0.361, 0.071), true));
-
-    AddMeshToList(object2D::CreateSquare("blueSquare", glm::vec3(0.439, 0.733, 0.839), true));
-
-    AddMeshToList(object2D::CreateSquare("orangeSquare", glm::vec3(1, 0.5, 0), true));
-
-    AddMeshToList(object2D::CreateSquare("yellowSquare", glm::vec3(0.929, 0.898, 0.643), true));
-
-    AddMeshToList(object2D::CreateSquare("purpleSquare", glm::vec3(0.62, 0.408, 0.961), true));
-
-    AddMeshToList(object2D::CreateSquare("whiteSquare", glm::vec3(1, 1, 1)));
-}
-
-void Lab3::InitWeapons()
-{
-    // Define weapons
-    weaponCollorArray[0] = "orangeWeapon";
-    weaponCollorArray[1] = "blueWeapon";
-    weaponCollorArray[2] = "yellowWeapon";
-    weaponCollorArray[3] = "purpleWeapon";
-    weaponCollorArray[4] = "redWeapon";
-
-    AddMeshToList(object2D::CreateWeapon("redWeapon", glm::vec3(0.749, 0.067, 0.067), true));
-
-    AddMeshToList(object2D::CreateWeapon("blueWeapon", glm::vec3(0.439, 0.733, 0.839), true));
-
-    AddMeshToList(object2D::CreateWeapon("orangeWeapon", glm::vec3(0.961, 0.635, 0.086), true));
-
-    AddMeshToList(object2D::CreateWeapon("yellowWeapon", glm::vec3(0.969, 0.914, 0.416), true));
-
-    AddMeshToList(object2D::CreateWeapon("purpleWeapon", glm::vec3(0.62, 0.408, 0.961), true));
-
-    AddMeshToList(object2D::CreateWeapon("whiteWeapon", glm::vec3(1, 1, 1), true));
-}
-
-void Lab3::InitStars()
-{
-    // Define stars
-    starCollorArray[0] = "orangeStar";
-    starCollorArray[1] = "blueStar";
-    starCollorArray[2] = "yellowStar";
-    starCollorArray[3] = "purpleStar";
-    starCollorArray[4] = "redStar";
-
-    AddMeshToList(object2D::CreateStar("redStar", glm::vec3(0.749, 0.067, 0.067), true));
-
-    AddMeshToList(object2D::CreateStar("blueStar", glm::vec3(0.439, 0.733, 0.839), true));
-
-    AddMeshToList(object2D::CreateStar("orangeStar", glm::vec3(0.961, 0.635, 0.086), true));
-
-    AddMeshToList(object2D::CreateStar("yellowStar", glm::vec3(0.969, 0.914, 0.416), true));
-
-    AddMeshToList(object2D::CreateStar("purpleStar", glm::vec3(0.62, 0.408, 0.961), true));
-
-    AddMeshToList(object2D::CreateStar("whiteStar", glm::vec3(1, 1, 1), true));
-}
-
-void Lab3::InitHexagons()
-{
-    // Define stars
-    hexagonCollorArray[0] = "orangeHexagon";
-    hexagonCollorArray[1] = "blueHexagon";
-    hexagonCollorArray[2] = "yellowHexagon";
-    hexagonCollorArray[3] = "purpleHexagon";
-
-    AddMeshToList(object2D::CreateHexagon("redHexagon", glm::vec3(0.749, 0.067, 0.067), true));
-
-    AddMeshToList(object2D::CreateHexagon("blueHexagon", glm::vec3(0.439, 0.733, 0.839), true));
-
-    // Blue inside color is green
-    AddMeshToList(object2D::CreateHexagon("blueInsideColor", glm::vec3(0.886, 0.973, 1), true));
-
-    AddMeshToList(object2D::CreateHexagon("orangeHexagon", glm::vec3(0.961, 0.635, 0.086), true));
-
-    // Orange inside color is yellow
-    AddMeshToList(object2D::CreateHexagon("orangeInsideColor", glm::vec3(0.988, 0.89, 0.561), true));
-    
-    AddMeshToList(object2D::CreateHexagon("yellowHexagon", glm::vec3(0.969, 0.914, 0.416), true));
-
-    // Yellow inside color is green
-    AddMeshToList(object2D::CreateHexagon("yellowInsideColor", glm::vec3(0.996, 1, 0.89), true));
-
-    AddMeshToList(object2D::CreateHexagon("purpleHexagon", glm::vec3(0.62, 0.408, 0.961), true));
-
-    // Purple inside color is cream
-    AddMeshToList(object2D::CreateHexagon("purpleInsideColor", glm::vec3(1, 0.96, 0.76), true));
-
-    AddMeshToList(object2D::CreateHexagon("whiteHexagon", glm::vec3(1, 1, 1), true));
-}
 
 
 void Lab3::RenderArenaSquares()
@@ -1043,7 +1076,11 @@ void Lab3::CheckWeaponEnemyColision(std::vector<Enemy>::iterator enemy)
 void Lab3::RenderEnemy(float deltaTime)
 {
     
-    if (addEnemy == true) {
+    if (addEnemy == true 
+        && newLevel == false 
+        && gamePause == false 
+        && playerHealt > 0
+        ) {
         addEnemy = false;
         if (enemyCounter % 5 == 0) {
             enemySpeed += 5;
@@ -1141,7 +1178,7 @@ void Lab3::GenerateBullet() {
                 ++enemy;
             }
         }
-        if (genBullet == true) {
+        if (genBullet == true && gamePause == false) {
             Bullet bullet(weapon->getColor(), weapon->getPosX() + 20.0f, weapon->getPosY(), 2.0f, 2.0f);
             bullet.setRadius(bullet.getRadius() * 3.0f);
             SetBulletDamageAndSpeed(bullet);
@@ -1223,20 +1260,22 @@ bool Lab3::CheckBulletEnemyColision(std::vector<Enemy>::iterator enemy)
     return enemyElimination;
 }
 
+void Lab3::DragAndDropMechanism() {
+    modelMatrix = matrixForRender;
+    modelMatrix *= transform2D::Translate(mousePositionX, resolution.y - mousePositionY);
+    modelMatrix *= transform2D::Scale(weaponScale, weaponScale);
+    RenderMesh2D(meshes[drawWeaponbyColor + "Weapon"], shaders["VertexColor"], modelMatrix);
+}
 
 void Lab3::RenderMoneyStars(float deltaTimeSecond)
 {
-    // Change color
-    rainbowIndex += deltaTimeSecond;
-    float red = 0.5f + 0.5f * sin(rainbowIndex);
-    float green = 0.5f + 0.5f * sin(rainbowIndex + 2.0f);
-    float blue = 0.5f + 0.5f * sin(rainbowIndex + 4.0f);
-    AddMeshToList(object2D::CreateStar("rainbowStar", glm::vec3(red, green, blue), true));
-
     std::mt19937 generator(rd());
     std::uniform_int_distribution<int> distribution1(600, resolution.x);
 
-    if (generateStarsBool == true) {
+    if (generateStarsBool == true 
+        && gamePause == false 
+        && playerHealt > 0
+        ) {
         generateStarsBool = false;
         int xPos = distribution1(generator);
         MoneyStars moneyStar("rainbowStar", xPos, resolution.y - 100, 3.0f);
@@ -1503,7 +1542,6 @@ void Lab3::RenderBonuses()
     RenderMesh2D(meshes["whiteStar"], shaders["VertexColor"], modelMatrix);
     // ---------------------------------------------------------------------- Render Price
     // ===================================================================================
-
 
 
     // Render New Arena Squares Bonus

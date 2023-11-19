@@ -18,7 +18,7 @@ namespace tema
         Enemy(std::string color, float x, float y, float size);
         std::string getColor();
         void setHealt(int healt);
-        float getHealt();
+        int getHealt();
         void setPosX(float x);
         float getPosX();
         void setPosY(float y);
@@ -28,6 +28,6 @@ namespace tema
         void setRadius(float radius);
         float getRadius();
         void setSpeed(int speed);
-        float getSpeed();
+        int getSpeed();
     };
 }

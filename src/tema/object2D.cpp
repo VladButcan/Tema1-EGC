@@ -37,6 +37,33 @@ Mesh* object2D::CreateSquare(
     return square;
 }
 
+Mesh* object2D::CreateTriangle(
+    const std::string& name,
+    glm::vec3 color,
+    bool fill)
+{
+    std::vector<VertexFormat> vertices =
+    {
+        VertexFormat(glm::vec3(-10, -10, 0), color),
+        VertexFormat(glm::vec3(10 , -10, 0), color),
+        VertexFormat(glm::vec3(0 , 10 , 0), color)
+    };
+
+    Mesh* triangle = new Mesh(name);
+    std::vector<unsigned int> indices = { 0, 1, 2 };
+
+    if (!fill) {
+        triangle->SetDrawMode(GL_LINE_LOOP);
+    }
+    else {
+        // Draw 2 triangles. Add the remaining 2 indices
+        indices.push_back(0);
+    }
+
+    triangle->InitFromData(vertices, indices);
+    return triangle;
+}
+
 Mesh* object2D::CreateHexagon(
     const std::string& name,
     glm::vec3 color,

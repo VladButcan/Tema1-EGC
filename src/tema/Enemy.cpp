@@ -30,7 +30,7 @@ void Enemy::setHealt(int newHealt) {
     healt = newHealt;
 }
 
-float Enemy::getHealt() {
+int Enemy::getHealt() {
     return healt;
 }
 
@@ -70,6 +70,6 @@ void Enemy::setSpeed(int newSPeed) {
     speed = newSPeed;
 }
 
-float Enemy::getSpeed() {
+int Enemy::getSpeed() {
     return speed;
 }

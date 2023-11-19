@@ -48,6 +48,10 @@ namespace tema
         void FrameStart() override;
         void Update(float deltaTimeSeconds) override;
         void FrameEnd() override;
+
+        void ReinitVisualMatrix();
+        void RenderBonusScene(float deltaTimeSeconds);
+        void RenderGameScene(float deltaTimeSeconds);
         // On Input Update Functions
         void OnInputUpdate(float deltaTime, int mods) override;
         //On Key press Functions
@@ -61,6 +65,7 @@ namespace tema
         void OnMouseBtnPress(int mouseX, int mouseY, int button, int mods) override;
         void IndentifyMousePositionInWeaponBoxOnMouseButtonPress(int mouseX, int mouseY);
         void IndentifyMousePositionInBonusBoxOnMouseButtonPress(int mouseX, int mouseY);
+        void IndentifyMousePositionInPauseBoxMouseButtonPress(int mouseX, int mouseY);
         void IdentifyMousePositionInArenaBoxesOnMouseButtonPress(int mouseX, int mouseY, float &objectX, float &objectY);
         void SelectBonusAndPassLevel(int mouseX, int mouseY);
         void DeleteWeapon(float objectPositionX, float objectPositionY);
@@ -71,10 +76,12 @@ namespace tema
         // On Mouse Scrole Functions
         void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
         void OnWindowResize(int width, int height) override;
+        void ColorTheStar(float deltaTimeSecond);
         void ShowLevel();
+        void GameSettings();
+        void ValidateGameData(float &deltaTimeSeconds);
 
         void GetTime();
-        void InitPlayerHealt();
         void InitLevelNumbers();
         void InitSquares();
         void InitWeapons();
@@ -96,6 +103,7 @@ namespace tema
         void EliminateEmeny();
         void CheckWeaponEnemyColision(std::vector<Enemy>::iterator enemy);
         bool CheckBulletEnemyColision(std::vector<Enemy>::iterator enemy);
+        void DragAndDropMechanism();
         void RenderMoneyStars(float deltaTimeSecond);
         void EliminationByShrinking(float deltaTime);
         //void RenderBlockSquare(int translateX, int translateY);
@@ -134,18 +142,19 @@ namespace tema
         std::string numbersArray[10];
 
         // Buttons
-        float S_On;
-        float K_On;
-        float I_On;
-        float P_On;
+        bool S_On;
+        bool K_On;
+        bool I_On;
+        bool P_On;
 
         // Game
         int playerHealt;
         int gameMoney;
-        float selectBonus;
-        float newArenaSquares;
+        bool newArenaSquares;
+        bool gamePause;
         int arenaSquares;
         int mousePositionX, mousePositionY;
+
 
         //Money Stars
         bool generateStarsBool;
@@ -198,14 +207,18 @@ namespace tema
         std::vector<Bullet> bulletToEliminate;
 
         // Time evidence
+
+        std::chrono::milliseconds elapsedPauseTime;
+        std::chrono::time_point<std::chrono::high_resolution_clock> pauseCurrentTime;
+        std::chrono::time_point<std::chrono::high_resolution_clock> pauseLastUpdateTime;
         std::chrono::milliseconds elapsedEnemyTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> currentTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateEnemycurrentTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateEnemyLastUpdateTime;
-        std::chrono::seconds elapsedStarTime;
+        std::chrono::milliseconds elapsedStarTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateStarcurrentTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateStarLastUpdateTime;
-        std::chrono::seconds elapsedButtonTime;
+        std::chrono::milliseconds elapsedButtonTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateButtonCurrentTime;
         std::chrono::time_point<std::chrono::high_resolution_clock> generateButtonLastUpdateTime;
 
